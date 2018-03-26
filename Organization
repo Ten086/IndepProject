@@ -1,0 +1,33 @@
+SINGLE PLAYER:
+Classes:
+    *Tetrimino
+        shape
+        location on grid - maybe an array of the 4 blocks it takes up? int[][] of int[] with row and column?
+    *Grid/Matrix?
+        2D array 
+        current tetrimino
+        held piece 
+        boolean usedHeld? (if already swapped held piece, can't swap again)
+        array for next pieces
+        method for drawing a square on a block -> method for drawing a tetrimino on a certain position
+        timer...........?
+            every [amount of time], change position of current tetrimino and redraw
+        key listener for arrow keys, space, rotation, hold?
+            left or right
+                if not already leftmost or rightmost column, change location variable and redraw
+            space
+                get bottom-most free column, change location variable, redraw
+                get new tetrimino
+            rotate
+                big yikes.
+                axes of rotation: http://tetris.wikia.com/wiki/SRS?file=SRS-pieces.png
+            hold
+                if no held piece, add current piece to held and get new piece
+                if haven't already swapped, swap current tetrimino with held piece
+        method for checking if line cleared
+            for each row on grid check if all blocks are full
+            if full, delete row and shift everything down a row
+            get new tetrimino
+      
+Enums:
+  TetriminoShape?
