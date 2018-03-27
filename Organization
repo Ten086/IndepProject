@@ -1,0 +1,38 @@
+SINGLE PLAYER:
+Classes:
+    *Tetromino
+        shape
+        location on grid - maybe an array of the 4 blocks it takes up? int[][] of int[] with row and column?
+    *Grid/Matrix? (i think this should be 2 separate classes, one handles all the movement and stuff, the other handles the graphics)
+        2D array 
+        current tetrimino
+        held piece 
+        boolean usedHeld (if already swapped held piece, can't swap again)
+        array for next pieces
+        method for drawing a square on a block -> method for drawing a tetrimino on a certain position
+        timer
+        key listener for arrow keys, space, rotation, hold?
+            left or right
+                if not already leftmost or rightmost column, change location variable and redraw
+            space
+                get bottom-most free column, change location variable, redraw
+                get new tetrimino
+            rotate
+                big yikes.
+                axes of rotation: http://tetris.wikia.com/wiki/SRS?file=SRS-pieces.png
+                http://tetris.wikia.com/wiki/SRS will do
+            hold
+                if no held piece, add current piece to held and get new piece
+                if haven't already swapped, swap current tetrimino with held piece
+        method for checking if line cleared
+            for each row on grid check if all blocks are full
+            if full, delete row and shift everything down a row (play an animation???? i think it's possible)
+            get new tetrimino from next pieces
+    *Menu/main class
+        will have the main method
+        will do a thing
+Enums:
+  TetriminoShape
+  GridStatus (empty, piece, sent line, etc. helps us handle graphics a bit more easily)
+  TetrisGameState (menu, ingame, paused)
+  TetrisGameType (self-explanatory)
