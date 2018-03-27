@@ -3,9 +3,11 @@ Classes:
     *Tetromino
         shape
         location on grid - maybe an array of the 4 blocks it takes up? int[][] of int[] with row and column?
+        rotate method for different shapes here, then use this in Grid/Matrix?
+        
     *Grid/Matrix? (i think this should be 2 separate classes, one handles all the movement and stuff, the other handles the graphics)
         2D array 
-        current tetrimino
+        current tetromino
         held piece 
         boolean usedHeld (if already swapped held piece, can't swap again)
         array for next pieces
@@ -27,10 +29,12 @@ Classes:
         method for checking if line cleared
             for each row on grid check if all blocks are full
             if full, delete row and shift everything down a row (play an animation???? i think it's possible)
-            get new tetrimino from next pieces
-    *Menu/main class
-        will have the main method
-        will do a thing
+            get new tetromino from next pieces
+    *Menu
+        select single player or multiplayer
+        if single player, difficulty?
+        if multiplayer, first racing or versus, second same keyboard or maybe dif keyboards?
+        kEy lIstEneR? ? 
 Enums:
   TetriminoShape
   GridStatus (empty, piece, sent line, etc. helps us handle graphics a bit more easily)
