@@ -1,4 +1,6 @@
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -25,17 +27,11 @@ public class Tetronimo {
 	public static void main(String[] args) {
 		//this is just me being dumb and trying to draw stuff ignore
 		JFrame frame = new JFrame();
-		JPanel panel = (JPanel) frame.getContentPane();
-		BufferedImage image = new BufferedImage(500, 500, 0);
-		Graphics2D graphics = (Graphics2D) image.getGraphics();
-		ImageIcon icon = new ImageIcon(image);
-		JLabel label = new JLabel(icon);
-		panel.add(label);
-		Tetronimo test = new Tetronimo(TetrominoShape.O);
-		int[][] location = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
-		for (int[] loc : location) {
-			graphics.drawRect(loc[0], loc[1], boxSize, boxSize);
-		}
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setMinimumSize(new Dimension(500, 500));
+		TetrisPanel panel = new TetrisPanel();
+		frame.add(panel);
+		frame.setVisible(true);
 	}
 	
 	public Tetronimo(TetrominoShape s) {
