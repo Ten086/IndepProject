@@ -1,0 +1,123 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+
+import javax.swing.*;
+
+public class Grid extends JPanel implements KeyListener {
+
+	public static final int width = 500;
+	public static final int height = width * 2;
+	public static final int boxSize = 40;
+	public static final int rows = 20;
+	public static final int cols = 10;
+	public static final int xMargin = (width - (cols * boxSize)) / 2;
+	public static final int yMargin = (height - (rows * boxSize)) / 2;
+
+	public static final Color lightBlue = new Color(3, 243, 241);
+	public static final Color darkBlue = new Color (3, 0, 235);
+	public static final Color orange = new Color(246, 155, 1);
+	public static final Color yellow = new Color(237, 242, 6);
+	public static final Color green = new Color (5, 239, 7);
+	public static final Color purple = new Color(164, 4, 229);
+	public static final Color red = new Color(234, 4, 4);
+ 
+	private ArrayList<Tetromino> minos = new ArrayList<Tetromino>();
+	private Tetromino currentMino;
+
+	public static void main(String[] args) {
+		JFrame f = new JFrame();
+		int actualWidth = width + 26;
+		int actualHeight = height + 60;
+		f.setMinimumSize(new Dimension(actualWidth, actualHeight));
+		f.setMaximumSize(new Dimension(actualWidth, actualHeight));
+		Grid grid = new Grid();
+		f.setContentPane(grid);	
+		f.addKeyListener(grid);
+		f.setVisible(true);
+		Tetromino mino = new Tetromino(TetrominoShape.O);
+		int[][] testPos = {{0,0},{0,1},{1,0},{1,1}};
+		grid.addMino(mino);
+		grid.setCurrentMino(mino);
+		
+	}
+
+	public void addMino(Tetromino mino) {
+		minos.add(mino);
+	}
+
+	public void setCurrentMino(Tetromino mino) {
+		currentMino = mino;
+	}
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		drawGrid(g);
+		for (Tetromino mino : minos) {
+			drawMino(g, mino);
+		}
+	}
+
+	public void drawGrid(Graphics g) {
+		g.setColor(new Color(0, 0, 0));
+		for (int c = 0; c < cols; c++) {
+			for (int r = 0; r < rows; r++) {
+				g.drawRect((c * boxSize) + xMargin, (r * boxSize) + yMargin, boxSize, boxSize);
+			}
+		}
+	}
+
+	public void drawBox(Graphics g, Color c, int row, int col) {
+		int xPos = xMargin + (col * boxSize);
+		int yPos = yMargin + (row * boxSize);
+		g.setColor(c);
+		g.fillRect(xPos + 1, yPos + 1, boxSize - 1, boxSize - 1);
+	}
+
+	public void drawMino(Graphics g, Tetromino t) {
+		int[][] pos = t.getPos();
+		for (int[] coord : pos) {
+			drawBox(g, t.getShape().getColor(), coord[0], coord[1]);
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		//System.out.println(e.toString());
+		int keyInt = e.getKeyCode();
+		boolean onLeftEdge = false;
+		boolean onRightEdge = false;
+		//currentMino.printPos();
+		//System.out.println();
+		
+		for (int[] coord : currentMino.getPos()) {
+			if (coord[0] == 0)
+				onLeftEdge = true;
+			else if (coord[1] == cols - 1)
+				onRightEdge = true;
+		}
+
+		if (keyInt == 37 && !onLeftEdge) //left
+			currentMino.changePos(0, -1);
+		else if (keyInt == 39 && !onRightEdge) //right
+			currentMino.changePos(0, 1);
+		else if (keyInt == 40)
+			currentMino.changePos(1, 0); //down
+
+		repaint();
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+	}
+}
