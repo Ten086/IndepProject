@@ -1,21 +1,40 @@
 import java.awt.Color;
 
 public enum TetrominoShape {
-	I (new Color(3, 243, 241)),
-	J (new Color (3, 0, 235)),
-	L (new Color(246, 155, 1)),
-	O (new Color(237, 242, 6)),
-	S (new Color (5, 239, 7)),
-	T (new Color(164, 4, 229)),
-	Z (new Color(234, 4, 4));
+	I (new Color(3, 243, 241), "I", new int[][] {{0,0},{0,1},{0,2},{0,3}}),
+	J (new Color (3, 0, 235), "J", new int[][] {{0,1},{1,1},{2,1},{2,0}}),
+	L (new Color(246, 155, 1), "L", new int[][] {{0,0},{1,0},{2,0},{2,1}}),
+	O (new Color(237, 242, 6), "O", new int[][] {{0,0},{0,1},{1,0},{1,1}}),
+	S (new Color (5, 239, 7), "S", new int[][] {{1,0},{1,1},{0,1},{0,2}}),
+	T (new Color(164, 4, 229), "T", new int[][] {{0,0},{0,1},{0,2},{1,1}}),
+	Z (new Color(234, 4, 4), "Z", new int[][] {{0,0},{0,1},{1,1},{1,2}});
 	
 	private Color color;
-	//int[][] points   double[] center of rotation  
-	private TetrominoShape(Color clr) {
+	private String name;
+	
+	private int[][] coords;
+	private double[] COR; 
+	
+	private TetrominoShape(Color clr, String n, int[][] c) {
 		color = clr;
+		name = n;
+		coords = c;
 	}
 	
 	public Color getColor() {
 		return color;
 	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public int[][] getCoords() {
+		return coords;
+	}
+	
+	public String toString() {
+		return name;
+	}
+	
 }
