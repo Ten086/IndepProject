@@ -1,13 +1,15 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 import javax.swing.*;
 
-public class Grid extends JPanel implements KeyListener {
+public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public static final int width = 500;
 	public static final int height = width * 2;
@@ -42,7 +44,13 @@ public class Grid extends JPanel implements KeyListener {
 		int[][] testPos = {{0,0},{0,1},{1,0},{1,1}};
 		grid.addMino(mino);
 		grid.setCurrentMino(mino);
-		
+		grid.setUpTimer();
+	}
+	
+	public void setUpTimer() {
+		Timer timer = new Timer(1000, this);
+		timer.setInitialDelay(1000);
+		timer.start();
 	}
 
 	public void addMino(Tetromino mino) {
@@ -52,6 +60,7 @@ public class Grid extends JPanel implements KeyListener {
 	public void setCurrentMino(Tetromino mino) {
 		currentMino = mino;
 	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		drawGrid(g);
@@ -90,14 +99,15 @@ public class Grid extends JPanel implements KeyListener {
 		int keyInt = e.getKeyCode();
 		boolean onLeftEdge = false;
 		boolean onRightEdge = false;
-		//currentMino.printPos();
-		//System.out.println();
 		
 		for (int[] coord : currentMino.getPos()) {
-			if (coord[0] == 0)
+			int row = coord[0];
+			int col = coord[1];
+			if (col == 0)
 				onLeftEdge = true;
-			else if (coord[1] == cols - 1)
+			else if (col == cols - 1)
 				onRightEdge = true;
+			//else if (row below mino's row has fixed mino)
 		}
 
 		if (keyInt == 37 && !onLeftEdge) //left
@@ -106,18 +116,19 @@ public class Grid extends JPanel implements KeyListener {
 			currentMino.changePos(0, 1);
 		else if (keyInt == 40)
 			currentMino.changePos(1, 0); //down
-
+		currentMino.printPos();
+		System.out.println();
 		repaint();
 	}
 
-	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
-	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
+	}
+
+	public void actionPerformed(ActionEvent arg0) {
+		currentMino.changePos(1, 0);
+		repaint();
 	}
 }
