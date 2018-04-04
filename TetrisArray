@@ -1,0 +1,13 @@
+
+public class TetrisArray {
+	private Point[][] array = new Point[Grid.ROWS][Grid.HEIGHT];
+	
+	public TetrisArray() {
+		for (int i = 0; i < Grid.ROWS; i++) {
+			for (int j = 0; j < Grid.HEIGHT; j++) {
+				array[i][j] = Point.EMPTY;
+			}
+		}
+	}
+	
+}
