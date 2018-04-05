@@ -16,7 +16,7 @@ public enum Point {
 		try {
 			color = t.getColor();
 		} catch (Exception e) {
-			
+			color = null;
 		}
 	}
 	
@@ -24,8 +24,7 @@ public enum Point {
 		try {
 			return color;
 		} catch (Exception e) {
-			
+			return null;
 		}
-		return new Color(0, 0, 0);
 	}
 }
