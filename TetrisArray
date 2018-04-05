@@ -1,4 +1,3 @@
-
 public class TetrisArray {
 	private Point[][] array = new Point[Grid.ROWS][Grid.HEIGHT];
 	
@@ -10,4 +9,11 @@ public class TetrisArray {
 		}
 	}
 	
+	public Point getPoint(int r, int c) {
+		return array[r][c];
+	}
+	
+	public void setPoint(int r, int c, Point p) {
+		array[r][c] = p;
+	}
 }
