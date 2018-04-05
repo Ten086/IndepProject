@@ -35,10 +35,14 @@ Classes:
         if single player, difficulty?
         if multiplayer, first racing or versus, second same keyboard or maybe dif keyboards?
             i don't think multiple keyboards is a good idea
-        Key Listener 
+            Yeah that's fine we can do same keyboard and then maybe see if we could use 
+            that library for different keyboards if we have time
+        Key Listener <- Mouse Listener?
 Enums:
   TetrominoShape
   GridStatus (empty, piece, sent line, etc. helps us handle graphics a bit more easily)
       do we want to do the fb sent line style with bombs? or arena
+      I'm good with either, I don't remember how bombs work tho
+  Point
   TetrisGameState (menu, ingame, paused)
   TetrisGameType (self-explanatory)
