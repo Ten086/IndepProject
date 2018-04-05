@@ -34,9 +34,11 @@ Classes:
         select single player or multiplayer
         if single player, difficulty?
         if multiplayer, first racing or versus, second same keyboard or maybe dif keyboards?
-        kEy lIstEneR? ? 
+            i don't think multiple keyboards is a good idea
+        Key Listener 
 Enums:
-  TetriminoShape
+  TetrominoShape
   GridStatus (empty, piece, sent line, etc. helps us handle graphics a bit more easily)
+      do we want to do the fb sent line style with bombs? or arena
   TetrisGameState (menu, ingame, paused)
   TetrisGameType (self-explanatory)
