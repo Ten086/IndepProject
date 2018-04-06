@@ -11,12 +11,24 @@ public enum Point {
 	SETMINOT (TetrominoShape.T),
 	SETMINOZ (TetrominoShape.Z);
 	
-	private Color color = null;
+	private TetrominoShape shape;
+	private Color color;
+	
 	private Point(TetrominoShape t) {
 		try {
+			shape = t;
 			color = t.getColor();
 		} catch (Exception e) {
+			shape = null;
 			color = null;
+		}
+	}
+	
+	public TetrominoShape getShape() {
+		try {
+			return shape;
+		} catch (Exception e) {
+			return null;
 		}
 	}
 	
@@ -26,5 +38,11 @@ public enum Point {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public static Point[] getSetMinoList() {
+		Point[] points = {SETMINOI, SETMINOJ, SETMINOL, 
+				SETMINOO, SETMINOS, SETMINOT, SETMINOZ};
+		return points;
 	}
 }
