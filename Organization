@@ -45,6 +45,7 @@ Enums:
       I'm good with either, I don't remember how bombs work tho
       bombs just work like the entire garbage line clears if you place a piece on the bomb
       v fun for combos
+      Oh ok maybe do bombs then?
   Point
   TetrisGameState (menu, ingame, paused)
   TetrisGameType (self-explanatory)
