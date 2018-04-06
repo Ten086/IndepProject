@@ -16,4 +16,14 @@ public class TetrisArray {
 	public void setPoint(int r, int c, Point p) {
 		array[r][c] = p;
 	}
+	
+	public boolean checkCollision(int r, int c) {
+		boolean collides = false;
+		for (Point p : Point.getSetMinoList()) {
+			if (array[r+1][c] == p) {
+				collides = true;
+			}
+		}
+		return collides;
+	}
 }
