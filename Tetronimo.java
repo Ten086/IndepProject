@@ -1,4 +1,3 @@
-
 public class Tetromino {
 	
 	TetrominoShape shape;
@@ -6,6 +5,14 @@ public class Tetromino {
 	
 	public Tetromino(TetrominoShape s) {
 		shape = s;
+		position = shape.getCoords();
+	}
+	
+	public Tetromino() {
+		TetrominoShape[] shapes = {TetrominoShape.I, TetrominoShape.J, TetrominoShape.L,
+				TetrominoShape.O, TetrominoShape.S, TetrominoShape.T, TetrominoShape.Z};
+		int randomIndex = (int) (Math.random() * (shapes.length));
+		shape = shapes[randomIndex];
 		position = shape.getCoords();
 	}
 	
@@ -21,6 +28,20 @@ public class Tetromino {
 	
 	public int[][] getPos() {
 		return position;
+	}
+	
+	public Point getSetMino() {
+		Point setMino = null;
+		for (Point p : Point.getSetMinoList()) {
+			if (shape == p.getShape()) {
+				setMino = p;
+			}
+		}
+		return setMino;
+	}
+	
+	public void setInitialPos() {
+		changePos(0, 4);
 	}
 	
 	public void changePos(int rShift, int cShift) {
