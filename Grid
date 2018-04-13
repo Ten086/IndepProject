@@ -35,11 +35,11 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public static void main(String[] args) {
 		JFrame f = new JFrame();
-		int actualWidth = WIDTH + 26;
-		int actualHeight = HEIGHT + 60;
-		f.setMinimumSize(new Dimension(actualWidth, actualHeight));
+		f.setMinimumSize(new Dimension(WIDTH, HEIGHT));
+		f.setResizable(false);
 		Grid grid = new Grid();
 		f.setContentPane(grid);	
+		f.pack();
 		f.addKeyListener(grid);
 		f.setVisible(true);
 		grid.setCurrentMino(new Tetromino());
@@ -62,6 +62,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		g.drawString("Tetris", WIDTH / 3, YMARGIN / 2);
 		drawGrid(g);
 		drawMino(g, currentMino);
 		drawFromArray(g);
@@ -106,10 +107,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		int keyInt = e.getKeyCode();
 		boolean onLeftEdge = false;
 		boolean onRightEdge = false;
-		boolean collideBot = false;
 		boolean collideLeft = false;
 		boolean collideRight = false;
-		boolean atBottom = false;
 
 		for (int[] coord : currentMino.getPos()) {
 			int row = coord[0];
@@ -118,25 +117,29 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				onLeftEdge = true;
 			else if (col == COLS - 1)
 				onRightEdge = true;
-			if (row == ROWS - 1)
-				atBottom = true;
 			if (!onLeftEdge && array.checkCollision(row, col, "left")) {
 				collideLeft = true;
 			}
 			if (!onRightEdge && array.checkCollision(row, col, "right")) {
 				collideRight = true;
 			}
-			if (!atBottom && array.checkCollision(row, col, "below")) {
-				collideBot = true;
-			}
 		}
-
-		if (keyInt == 37 && !collideLeft && !onLeftEdge) //left
+		
+		if (keyInt == 37 && !collideLeft && !onLeftEdge) { //left
 			currentMino.changePos(0, -1);
-		else if (keyInt == 39 && !collideRight && !onRightEdge) //right
+			//System.out.println("move left");
+		}
+		/*else if (keyInt == 38) {
+			currentMino.rotate();
+		}*/
+		else if (keyInt == 39 && !collideRight && !onRightEdge) { //right
 			currentMino.changePos(0, 1);
-		else if (keyInt == 40 && !collideBot && !atBottom)
+			//System.out.println("move right");
+		}
+		else if (keyInt == 40 && !atBottom()) {
 			currentMino.changePos(1, 0); //down
+			//System.out.println("move down");
+		}
 		repaint();
 	}
 
@@ -151,6 +154,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		for (int[] coord : currentMino.getPos()) {
 			int row = coord[0];
 			int col = coord[1];
+			//System.out.println(array.checkCollision(row, col, "below"));
 			if (row == ROWS - 1)
 				goingToCollide = true;
 			else if (array.checkCollision(row, col, "below")) {
@@ -167,12 +171,14 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				array.setPoint(coord[0], coord[1], Point.CURRMINO);
 			}
 		}
-		else {
+		if (atBottom()){
+			System.out.println("at bottom");
 			for (int[] coord : currentMino.getPos()) {
 				array.setPoint(coord[0], coord[1], currentMino.getSetMino());
 			}
 			currentMino = new Tetromino();
-			currentMino.setInitialPos();
+			//System.out.println(currentMino);
+			//currentMino.setInitialPos();
 		}	
 		repaint();
 	}
