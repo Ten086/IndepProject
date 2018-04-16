@@ -1,5 +1,9 @@
 public class TetrisArray {
 	private Point[][] array = new Point[Grid.ROWS][Grid.HEIGHT];
+
+	public static final int BELOW = 0;
+	public static final int LEFT = 1;
+	public static final int RIGHT = 2;
 	
 	public TetrisArray() {
 		for (int i = 0; i < Grid.ROWS; i++) {
@@ -8,19 +12,29 @@ public class TetrisArray {
 			}
 		}
 	}
-	
+
 	public Point getPoint(int r, int c) {
 		return array[r][c];
 	}
-	
+
 	public void setPoint(int r, int c, Point p) {
 		array[r][c] = p;
 	}
-	
-	public boolean checkCollision(int r, int c) {
+
+	public boolean checkCollision(int r, int c, int direction) {
 		boolean collides = false;
+		Point pointToCheck = null;
+		if (r != Grid.ROWS - 1 && direction == BELOW) {
+			pointToCheck = array[r+1][c];
+		}
+		else if (c != 0 && direction == LEFT) {
+			pointToCheck = array[r][c-1];
+		}
+		else if (c != Grid.COLS - 1 && direction == RIGHT) {
+			pointToCheck = array[r][c+1];
+		}
 		for (Point p : Point.getSetMinoList()) {
-			if (array[r+1][c] == p) {
+			if (pointToCheck == p) {
 				collides = true;
 			}
 		}
