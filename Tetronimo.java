@@ -2,6 +2,8 @@ public class Tetromino {
 	
 	TetrominoShape shape;
 	int[][] position = new int[4][2];
+	TetrominoShape[] shapes = {TetrominoShape.I, TetrominoShape.J, TetrominoShape.L,
+				TetrominoShape.O, TetrominoShape.S, TetrominoShape.T, TetrominoShape.Z};
 	
 	public Tetromino(TetrominoShape s) {
 		shape = s;
@@ -9,8 +11,7 @@ public class Tetromino {
 	}
 	
 	public Tetromino() {
-		TetrominoShape[] shapes = {TetrominoShape.I, TetrominoShape.J, TetrominoShape.L,
-				TetrominoShape.O, TetrominoShape.S, TetrominoShape.T, TetrominoShape.Z};
+		
 		int randomIndex = (int) (Math.random() * (shapes.length));
 		shape = shapes[randomIndex];
 		position = shape.getCoords();
