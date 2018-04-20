@@ -4,7 +4,7 @@ public class TetrisArray {
 	public static final int BELOW = 0;
 	public static final int LEFT = 1;
 	public static final int RIGHT = 2;
-	
+
 	public TetrisArray() {
 		for (int i = 0; i < Grid.ROWS; i++) {
 			for (int j = 0; j < Grid.HEIGHT; j++) {
@@ -21,6 +21,37 @@ public class TetrisArray {
 		array[r][c] = p;
 	}
 
+	public boolean hasPointAt(int r, int c) {
+		boolean hasPoint = false;
+		for (Point p : Point.getSetMinoList()) {
+			if (array[r][c] == p) {
+				hasPoint = true;
+			}
+		}
+		return hasPoint;
+	}
+	public boolean colHasPoint(int col) {
+		boolean hasPoint = false;
+		for (int r = 0; r < Grid.ROWS; r++) {
+			if (hasPointAt(r, col)) {
+				hasPoint = true;
+			}
+
+		}
+		return hasPoint;
+	}
+
+	public boolean checkCollision(Tetromino mino, int direction) {
+		boolean collides = false;
+		for (int[] coord : mino.getPos()) {
+			int row = coord[0];
+			int col = coord[1];
+			if (checkCollision(row, col, direction)) {
+				collides = true;
+			}
+		}
+		return collides;
+	}
 	public boolean checkCollision(int r, int c, int direction) {
 		boolean collides = false;
 		Point pointToCheck = null;
