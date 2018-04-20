@@ -1,3 +1,6 @@
+//https://stackoverflow.com/questions/14183529/paint-method-draws-outside-jframe-if-first-coord-0-0
+
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -5,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -52,9 +53,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		timer.start();
 	}
 
-	public void addMino(Tetromino mino) {
+	/*public void addMino(Tetromino mino) {
 		minos.add(mino);
-	}
+	}*/
 
 	public void setCurrentMino(Tetromino mino) {
 		currentMino = mino;
@@ -101,12 +102,23 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 	}
-	@Override
+	
+	public void newMino() {
+		System.out.println("at bottom");
+		for (int[] coord : currentMino.getPos()) {
+			array.setPoint(coord[0], coord[1], currentMino.getSetMino());
+		}
+		currentMino = new Tetromino();
+		currentMino.setInitialPos();
+		repaint();
+	}
+
 	public void keyPressed(KeyEvent e) {
 		//System.out.println(e.toString());
 		int keyInt = e.getKeyCode();
 		boolean onLeftEdge = false;
 		boolean onRightEdge = false;
+		boolean atBottom = false;
 		boolean collideLeft = false;
 		boolean collideRight = false;
 
@@ -117,28 +129,41 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				onLeftEdge = true;
 			else if (col == COLS - 1)
 				onRightEdge = true;
-			if (!onLeftEdge && array.checkCollision(row, col, "left")) {
+			if (row == ROWS - 1)
+				atBottom = true;
+			if (!onLeftEdge && array.checkCollision(currentMino, TetrisArray.LEFT)) {
 				collideLeft = true;
 			}
-			if (!onRightEdge && array.checkCollision(row, col, "right")) {
+			if (!onRightEdge && array.checkCollision(currentMino, TetrisArray.RIGHT)) {
 				collideRight = true;
 			}
 		}
 		
-		if (keyInt == 37 && !collideLeft && !onLeftEdge) { //left
+		//left
+		if (keyInt == 37 && !collideLeft && !onLeftEdge) {
 			currentMino.changePos(0, -1);
-			//System.out.println("move left");
 		}
+		
 		/*else if (keyInt == 38) {
 			currentMino.rotate();
 		}*/
-		else if (keyInt == 39 && !collideRight && !onRightEdge) { //right
+		
+		//right
+		else if (keyInt == 39 && !collideRight && !onRightEdge) {
 			currentMino.changePos(0, 1);
 			//System.out.println("move right");
 		}
-		else if (keyInt == 40 && !atBottom()) {
-			currentMino.changePos(1, 0); //down
+		
+		//down
+		else if (keyInt == 40 && !array.checkCollision(currentMino, TetrisArray.BELOW) && !atBottom) {
+			currentMino.changePos(1, 0);
 			//System.out.println("move down");
+		}
+		
+		//space
+		else if (keyInt == 32) {
+			hardDrop();
+			newMino();
 		}
 		repaint();
 	}
@@ -149,37 +174,41 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void keyTyped(KeyEvent arg0) {
 	}
 
-	public boolean atBottom() {
-		boolean goingToCollide = false;
+	public void hardDrop() {
+		int[] minoLowest = currentMino.getLowestCoord();
+		int minoLowestRow = minoLowest[0];
+		int rowsToDrop = 0;
 		for (int[] coord : currentMino.getPos()) {
-			int row = coord[0];
-			int col = coord[1];
-			//System.out.println(array.checkCollision(row, col, "below"));
-			if (row == ROWS - 1)
-				goingToCollide = true;
-			else if (array.checkCollision(row, col, "below")) {
-				goingToCollide = true;
+			if (coord[0] == minoLowestRow) {
+				if (!array.colHasPoint(minoLowest[1])) {
+					rowsToDrop = Grid.ROWS - minoLowestRow - 1;
+				}
+				else {
+					for (int r = minoLowestRow; r < Grid.ROWS; r++) {
+						if (rowsToDrop == 0 && array.hasPointAt(r, minoLowest[1])) {
+							rowsToDrop = r - minoLowestRow;
+						}
+					}
+				}
 			}
 		}
-		return goingToCollide;
+		System.out.println(rowsToDrop);
+		currentMino.changePos(rowsToDrop, 0);
+		currentMino.printPos();
+		repaint();
 	}
-
+	
 	public void actionPerformed(ActionEvent arg0) {
-		if (!atBottom()) {
+		if (!currentMino.atBottom() && !array.checkCollision(currentMino, TetrisArray.BELOW)) {
 			currentMino.changePos(1, 0);
 			for (int[] coord : currentMino.getPos()) {
 				array.setPoint(coord[0], coord[1], Point.CURRMINO);
 			}
 		}
-		if (atBottom()){
-			System.out.println("at bottom");
-			for (int[] coord : currentMino.getPos()) {
-				array.setPoint(coord[0], coord[1], currentMino.getSetMino());
-			}
-			currentMino = new Tetromino();
-			//System.out.println(currentMino);
-			//currentMino.setInitialPos();
+		else if (currentMino.atBottom()){
+			newMino();
 		}	
+		
 		repaint();
 	}
 }
