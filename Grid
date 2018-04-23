@@ -111,6 +111,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		}
 		currentMino = new Tetromino();
 		currentMino.setInitialPos();
+		System.out.print("new mino set pos ");
+		System.out.println(currentMino.getPos());
 		repaint();
 	}
 
@@ -164,7 +166,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		//space
 		else if (keyInt == keys[4]) {
 			hardDrop();
-			//newMino();
+			newMino();
 		}
 		repaint();
 	}
@@ -178,7 +180,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void hardDrop() {
 		int[] minoLowest = currentMino.getLowestCoord();
 		int minoLowestRow = minoLowest[0];
+		System.out.println("lowest row: " + minoLowestRow);
 		int rowsToDrop = 0;
+		
 		for (int[] coord : currentMino.getPos()) {
 			if (coord[0] == minoLowestRow) {
 				if (!array.colHasPoint(minoLowest[1])) {
@@ -186,9 +190,13 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 					rowsToDrop = Grid.ROWS - minoLowestRow - 1;
 				}
 				else {
-					for (int r = minoLowestRow; r < Grid.ROWS; r++) {
-						if (rowsToDrop == 0 && array.hasPointAt(r, minoLowest[1])) {
-							rowsToDrop = r - minoLowestRow - 1;
+					int rowToCheck = minoLowestRow;
+					while (rowToCheck < Grid.ROWS && rowsToDrop == 0) {
+						if (array.hasPointAt(rowToCheck, minoLowest[1])) {
+							rowsToDrop = rowToCheck - minoLowestRow - 1;
+						}
+						else {
+							rowToCheck++;
 						}
 					}
 				}
@@ -197,6 +205,12 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		currentMino.changePos(rowsToDrop, 0);
 	}
 
+	public void removeCurrentMinoPoints() {
+		for (int[] coord : currentMino.getPos()) {
+			array.setPoint(coord[0], coord[1], Point.EMPTY);
+		}
+	}
+	
 	public void addCurrentMinoPoints() {
 		for (int[] coord : currentMino.getPos()) {
 			array.setPoint(coord[0], coord[1], Point.CURRMINO);
@@ -214,19 +228,25 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			array.setPoint(coord[0], coord[1], setPoint);
 		}
 	}
+	
 	public void actionPerformed(ActionEvent arg0) {
 		timerCount++;
+		
 		if (timerCount % 100 == 0) {
 			timerCount = 0;
-			if (!currentMino.atBottom() && !array.checkCollision(currentMino, TetrisArray.BELOW)) {
+			boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
+			if (!currentMino.atBottom() && !collides) {
+				removeCurrentMinoPoints();
 				currentMino.changePos(1, 0);
 				addCurrentMinoPoints();
 			}
-			boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
+			
 			if (currentMino.atBottom() || collides){
+				System.out.println("at bottom");
 				newMino();
 			}
 		}	
+		
 		repaint();
 	}
 }
