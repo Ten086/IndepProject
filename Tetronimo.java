@@ -1,11 +1,15 @@
+import java.awt.Color;
+
 public class Tetromino {
 	
 	TetrominoShape shape;
 	int[][] position = new int[4][2];
+	Color color;
 	
 	public Tetromino(TetrominoShape s) {
 		shape = s;
-		position = shape.getCoords();
+		position = getInitialPosCopy();
+		color = shape.getColor();
 	}
 	
 	public Tetromino() {
@@ -13,19 +17,33 @@ public class Tetromino {
 				TetrominoShape.O, TetrominoShape.S, TetrominoShape.T, TetrominoShape.Z};
 		int randomIndex = (int) (Math.random() * (shapes.length));
 		shape = shapes[randomIndex];
-		position = shape.getCoords();
+		position = getInitialPosCopy();
+		color = shape.getColor();
 	}
 	
 	public TetrominoShape getShape() {
 		return shape;
 	}
 	
+	public Color getColor() {
+		return color;
+	}
 	public void printPos() {
 		for (int[] coords : position) {
 			System.out.print("row " + coords[0] + ", col " + coords[1] + " | ");
 		}
 	}
 	
+	public int[][] getInitialPosCopy() {
+		int[][] orig = shape.getCoords();
+		int[][] copy = new int[4][2];
+		for (int i = 0; i < orig.length; i++) {
+			for (int j = 0; j < orig[0].length; j++) {
+				copy[i][j] = orig[i][j];
+			}
+		}
+		return copy;
+	}
 	public int[][] getPos() {
 		return position;
 	}
@@ -51,7 +69,7 @@ public class Tetromino {
 	}
 	
 	public void setInitialPos() {
-		position = shape.getCoords();
+		position = getInitialPosCopy();
 		changePos(0, 4);
 	}
 	
@@ -113,16 +131,4 @@ public class Tetromino {
 		}
 		return collides;
 	}
-	/*public void rotate() {
-		int posLength = position.length;
-		int[] rows = new int[posLength];
-		int[] cols = new int[posLength];
-		for (int i = 0; i < posLength; i++) {
-			rows[i] = position[i][0];
-			cols[i] = position[i][1];
-			position[i][0] = cols[i];
-			position[i][1] = rows[i];
-		}
-	}*/
-	
 }
