@@ -66,7 +66,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		super.paintComponent(g);
 		g.drawString("Tetris", WIDTH / 3, YMARGIN / 2);
 		drawGrid(g);
-		drawMino(g, currentMino);
+		drawCurrentMino(g);
 		drawFromArray(g);
 	}
 
@@ -86,10 +86,10 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
 	}
 
-	public void drawMino(Graphics g, Tetromino t) {
-		int[][] pos = t.getPos();
+	public void drawCurrentMino(Graphics g) {
+		int[][] pos = currentMino.getPos();
 		for (int[] coord : pos) {
-			drawBox(g, t.getShape().getColor(), coord[0], coord[1]);
+			drawBox(g, currentMino.getShape().getColor(), coord[0], coord[1]);
 		}
 	}
 
@@ -182,8 +182,21 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		int minoLowestRow = minoLowest[0];
 		System.out.println("lowest row: " + minoLowestRow);
 		int rowsToDrop = 0;
+		int highestFilledRow = 19;
 		
 		for (int[] coord : currentMino.getPos()) {
+			if (coord[0] == minoLowestRow) {
+				if (array.colHasPoint(coord[1])) {
+					if (array.getHighestFilledRow(coord[1]) < highestFilledRow) {
+						highestFilledRow = array.getHighestFilledRow(coord[1]) - 1;
+						System.out.println("highest filled: " + highestFilledRow);
+					}
+				}
+			}
+		}
+		rowsToDrop = highestFilledRow - minoLowestRow;
+		
+		/*for (int[] coord : currentMino.getPos()) {
 			if (coord[0] == minoLowestRow) {
 				if (!array.colHasPoint(minoLowest[1])) {
 					System.out.println("doesn't have point in col");
@@ -201,7 +214,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 					}
 				}
 			}
-		}
+		}*/
 		currentMino.changePos(rowsToDrop, 0);
 	}
 
