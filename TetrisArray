@@ -13,23 +13,6 @@ public class TetrisArray {
 		}
 	}
 
-	public void printArray() {
-		for (int i = 0; i < Grid.ROWS; i++) {
-			for (int j = 0; j < Grid.HEIGHT; j++) {
-				if (array[i][j] == Point.CURRMINO) {
-					System.out.print("C ");
-				}
-				else if (array[i][j] != Point.EMPTY) {
-					System.out.print(array[i][j].getShape().getName() + " ");
-				}
-				else {
-					System.out.print("[] ");
-				}
-			}
-			System.out.println();
-		}
-		System.out.println("NEXT FRAME");
-	}
 	public Point getPoint(int r, int c) {
 		return array[r][c];
 	}
@@ -47,30 +30,7 @@ public class TetrisArray {
 		}
 		return hasPoint;
 	}
-	public boolean colHasPoint(int col) {
-		boolean hasPoint = false;
-		for (int r = 0; r < Grid.ROWS; r++) {
-			if (hasPointAt(r, col)) {
-				hasPoint = true;
-			}
-
-		}
-		return hasPoint;
-	}
-
-	public int getHighestFilledRow(int col) {
-		int row = 20;
-		int r = 0;
-		while (row == 20 && r < Grid.ROWS) {
-			if (hasPointAt(r, col)) {
-				row = r;
-			}
-			else {
-				r++;
-			}
-		}
-		return row;
-	}
+	
 	public boolean checkCollision(Tetromino mino, int direction) {
 		boolean collides = false;
 		for (int[] coord : mino.getPos()) {
@@ -82,6 +42,7 @@ public class TetrisArray {
 		}
 		return collides;
 	}
+	
 	public boolean checkCollision(int r, int c, int direction) {
 		boolean collides = false;
 		Point pointToCheck = null;
