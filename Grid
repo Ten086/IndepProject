@@ -105,14 +105,16 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void newMino() {
-		addSetMinoPoints();
-		for (int[] coord : currentMino.getPos()) {
-			array.setPoint(coord[0], coord[1], currentMino.getSetMino());
+		Point setPoint = Point.SETMINOI;
+		for (Point p : Point.getSetMinoList()) {
+			if (p.getColor() == currentMino.getColor()) {
+				setPoint = p;
+			}
 		}
+		setCurrentMinoPoints(setPoint);
 		currentMino = new Tetromino();
 		currentMino.setInitialPos();
-		System.out.print("new mino set pos ");
-		System.out.println(currentMino.getPos());
+		setCurrentMinoPoints(Point.CURRMINO);
 		repaint();
 	}
 
@@ -176,69 +178,16 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public void keyTyped(KeyEvent arg0) {
 	}
-
+	
 	public void hardDrop() {
-		int[] minoLowest = currentMino.getLowestCoord();
-		int minoLowestRow = minoLowest[0];
-		System.out.println("lowest row: " + minoLowestRow);
-		int rowsToDrop = 0;
-		int highestFilledRow = 19;
-		
-		for (int[] coord : currentMino.getPos()) {
-			if (coord[0] == minoLowestRow) {
-				if (array.colHasPoint(coord[1])) {
-					if (array.getHighestFilledRow(coord[1]) < highestFilledRow) {
-						highestFilledRow = array.getHighestFilledRow(coord[1]) - 1;
-						System.out.println("highest filled: " + highestFilledRow);
-					}
-				}
-			}
-		}
-		rowsToDrop = highestFilledRow - minoLowestRow;
-		
-		/*for (int[] coord : currentMino.getPos()) {
-			if (coord[0] == minoLowestRow) {
-				if (!array.colHasPoint(minoLowest[1])) {
-					System.out.println("doesn't have point in col");
-					rowsToDrop = Grid.ROWS - minoLowestRow - 1;
-				}
-				else {
-					int rowToCheck = minoLowestRow;
-					while (rowToCheck < Grid.ROWS && rowsToDrop == 0) {
-						if (array.hasPointAt(rowToCheck, minoLowest[1])) {
-							rowsToDrop = rowToCheck - minoLowestRow - 1;
-						}
-						else {
-							rowToCheck++;
-						}
-					}
-				}
-			}
-		}*/
-		currentMino.changePos(rowsToDrop, 0);
-	}
-
-	public void removeCurrentMinoPoints() {
-		for (int[] coord : currentMino.getPos()) {
-			array.setPoint(coord[0], coord[1], Point.EMPTY);
+		while (!currentMino.atBottom() && !array.checkCollision(currentMino, TetrisArray.BELOW)) {
+			currentMino.changePos(1, 0);
 		}
 	}
 	
-	public void addCurrentMinoPoints() {
+	public void setCurrentMinoPoints(Point p) {
 		for (int[] coord : currentMino.getPos()) {
-			array.setPoint(coord[0], coord[1], Point.CURRMINO);
-		}
-	}
-
-	public void addSetMinoPoints() {
-		for (int[] coord : currentMino.getPos()) {
-			Point setPoint = null;
-			for (Point p : Point.getSetMinoList()) {
-				if (p.getColor() == currentMino.getShape().getColor()) {
-					setPoint = p;
-				}
-			}
-			array.setPoint(coord[0], coord[1], setPoint);
+			array.setPoint(coord[0], coord[1], p);
 		}
 	}
 	
@@ -249,9 +198,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			timerCount = 0;
 			boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
 			if (!currentMino.atBottom() && !collides) {
-				removeCurrentMinoPoints();
+				setCurrentMinoPoints(Point.EMPTY);
 				currentMino.changePos(1, 0);
-				addCurrentMinoPoints();
+				setCurrentMinoPoints(Point.CURRMINO);
 			}
 			
 			if (currentMino.atBottom() || collides){
