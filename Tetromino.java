@@ -144,6 +144,16 @@ public class Tetromino {
 		return atBot;
 	}
 	
+	public static boolean atBottom(int[][] coords) {
+		boolean atBot = false;
+		for (int[] coord : coords) {
+			if (coord[0] == Grid.ROWS - 1) {
+				atBot = true;
+			}
+		}
+		return atBot;
+	}
+	
 	public boolean collidesLeft(TetrisArray array) {
 		boolean collides = false;
 		for (int[] coord : position) {
