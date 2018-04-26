@@ -108,8 +108,18 @@ public class TetrisArray {
 	}
 	
 	public void clearLines(ArrayList<Point[]> filledLines) {
-		for (Point[] row : filledLines) {
-			
+		ArrayList<Point[]> newArrayRows = new ArrayList<Point[]>();
+		Point[][] newArray = new Point[Grid.ROWS][Grid.COLS];
+		
+		for (int r = Grid.ROWS - 1; r >= 0; r--) {
+			Point[] row = array[r];
+			if (!filledLines.contains(row)) {
+				newArrayRows.add(row);
+			}
+		}
+		
+		for (int r = 0; r < newArray.length; r++) {
+			newArray[r] = newArrayRows.get(r);
 		}
 	}
 }
