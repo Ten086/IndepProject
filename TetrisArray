@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class TetrisArray {
 	private Point[][] array = new Point[Grid.ROWS][Grid.HEIGHT];
 
@@ -43,6 +45,18 @@ public class TetrisArray {
 		return collides;
 	}
 	
+	public boolean checkCollision(int[][] coords, int direction) {
+		boolean collides = false;
+		for (int[] coord : coords) {
+			int row = coord[0];
+			int col = coord[1];
+			if (checkCollision(row, col, direction)) {
+				collides = true;
+			}
+		}
+		return collides;
+	}
+	
 	public boolean checkCollision(int r, int c, int direction) {
 		boolean collides = false;
 		Point pointToCheck = null;
@@ -61,5 +75,41 @@ public class TetrisArray {
 			}
 		}
 		return collides;
+	}
+	
+	public boolean lineFilled(int r) {
+		boolean filled = true;
+		for (Point p : array[r]) {
+			if (!p.isSetPoint()) {
+				filled = false;
+			}
+		}
+		return filled;
+	}
+	
+	public boolean lineFilled(Point[] row) {
+		boolean filled = true;
+		for (Point p : row) {
+			if (!p.isSetPoint()) {
+				filled = false;
+			}
+		}
+		return filled;
+	}
+	
+	public ArrayList<Point[]> getFilledLines() {
+		ArrayList<Point[]> filledLines = new ArrayList<Point[]>();
+		for (Point[] row : array) {
+			if (lineFilled(row)) {
+				filledLines.add(row);
+			}
+		}
+		return filledLines;
+	}
+	
+	public void clearLines(ArrayList<Point[]> filledLines) {
+		for (Point[] row : filledLines) {
+			
+		}
 	}
 }
