@@ -2,9 +2,10 @@ import java.awt.Color;
 
 public class Tetromino {
 	
-	TetrominoShape shape;
-	int[][] position = new int[4][2];
-	Color color;
+	private TetrominoShape shape;
+	private int[][] position = new int[4][2];
+	private double[] COR = new double[2];
+	private Color color;
 	
 	public Tetromino(TetrominoShape s) {
 		shape = s;
