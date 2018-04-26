@@ -3,6 +3,7 @@ import java.awt.Color;
 public enum Point {
 	EMPTY (null),
 	CURRMINO (null),
+	GHOST (null),
 	SETMINOI (TetrominoShape.I),
 	SETMINOJ (TetrominoShape.J),
 	SETMINOL (TetrominoShape.L),
@@ -24,6 +25,9 @@ public enum Point {
 		}
 	}
 	
+	public String toString() {
+		return shape.getName();
+	}
 	public TetrominoShape getShape() {
 		try {
 			return shape;
@@ -40,6 +44,15 @@ public enum Point {
 		}
 	}
 	
+	public boolean isSetPoint() {
+		boolean isSetPt = false;
+		for (Point p : getSetMinoList()) {
+			if (this == p) {
+				isSetPt = true;
+			}
+		}
+		return isSetPt;
+	}
 	public static Point[] getSetMinoList() {
 		Point[] points = {SETMINOI, SETMINOJ, SETMINOL, 
 				SETMINOO, SETMINOS, SETMINOT, SETMINOZ};
