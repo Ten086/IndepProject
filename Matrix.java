@@ -115,12 +115,12 @@ public class Matrix {
 	public void rotCClws() {
 		double[][] rotMatrix = {{0, -1}, {1, 0}};
 		Matrix rot = new Matrix(rotMatrix);
-		matrix = multiplyMatrix(rot, this).getMatrix();
+		matrix = multiplyMatrix(this, rot).getMatrix();
 	}
 	public void rotClws() {
 		double[][] rotMatrix = {{0, 1}, {-1, 0}};
 		Matrix rot = new Matrix(rotMatrix);
-		matrix = multiplyMatrix(rot, this).getMatrix();
+		matrix = multiplyMatrix(this, rot).getMatrix();
 	}
 	public double determinant() {
 		if (matrix.length == matrix[0].length) {
