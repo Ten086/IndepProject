@@ -14,7 +14,7 @@ import javax.swing.*;
 
 public class Grid extends JPanel implements KeyListener, ActionListener {
 
-	private static int[] keys = {KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
+	private static int[] keys = {KeyEvent.VK_LEFT, KeyEvent.VK_Z, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
 	//L, rotccw, R, SD, HD, rotcw
 	
 	public static final int WIDTH = 400;
@@ -66,10 +66,10 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		super.paintComponent(g);
 		g.drawString("Tetris", WIDTH / 3, YMARGIN / 2);
 		drawGrid(g);
-		drawCurrentMino(g);
 		if (!currentMino.atBottom()) {
 			drawGhostPiece(g);
 		}
+		drawCurrentMino(g);
 		drawFromArray(g);
 	}
 
@@ -220,6 +220,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	
 	public void actionPerformed(ActionEvent arg0) {
 		timerCount++;
+		ArrayList<Point[]> filledLines = array.getFilledLines();
+		array.clearLines(filledLines);
 		
 		if (timerCount % 100 == 0) {
 			timerCount = 0;
@@ -231,7 +233,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			}
 			
 			if (currentMino.atBottom() || collides){
-				System.out.println("at bottom");
 				newMino();
 			}
 		}	
