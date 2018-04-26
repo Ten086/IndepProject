@@ -78,7 +78,60 @@ public class Tetromino {
 			coord[0] += rShift;
 			coord[1] += cShift;
 		}
+		COR[0] += rShift;
+		COR[1] += cShift;
 	}
+	
+	public void rotateCCW() {
+		double[][] tempPos = new double[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				tempPos[i][j] = position[i][j] - COR[j];
+			}
+		}
+		Matrix tempMat = new Matrix(tempPos);
+		tempMat.rotCClws();
+		tempPos = tempMat.getMatrix();
+		double[][] almostPos = new double[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				almostPos[i][j] = tempPos[i][j] + COR[j];
+			}
+		}
+		int[][] intPos = new int[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				intPos[i][j] = (int) almostPos[i][j];
+			}
+		}
+		position = intPos;
+	}
+	
+	public void rotateCW() {
+		double[][] tempPos = new double[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				tempPos[i][j] = position[i][j] - COR[j];
+			}
+		}
+		Matrix tempMat = new Matrix(tempPos);
+		tempMat.rotClws();
+		tempPos = tempMat.getMatrix();
+		double[][] almostPos = new double[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				almostPos[i][j] = tempPos[i][j] + COR[j];
+			}
+		}
+		int[][] intPos = new int[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				intPos[i][j] = (int) almostPos[i][j];
+			}
+		}
+		position = intPos;
+	}
+	
 	
 	public boolean atBottom() {
 		boolean atBot = false;
