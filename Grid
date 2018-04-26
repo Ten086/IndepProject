@@ -67,6 +67,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		g.drawString("Tetris", WIDTH / 3, YMARGIN / 2);
 		drawGrid(g);
 		drawCurrentMino(g);
+		if (!currentMino.atBottom()) {
+			drawGhostPiece(g);
+		}
 		drawFromArray(g);
 	}
 
@@ -86,6 +89,24 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
 	}
 
+	public void drawGhostPiece(Graphics g) {
+		int[][] pos = new int[4][2];
+		for (int i = 0; i < pos.length; i++) {
+			for (int j = 0; j < pos[0].length; j++) {
+				pos[i][j] = currentMino.getPos()[i][j];
+			}
+		}
+		while (!Tetromino.atBottom(pos) && !array.checkCollision(pos, TetrisArray.BELOW)) {
+			for (int[] coords : pos) {
+				coords[0]++;
+			}
+		}
+
+		for (int[] coords : pos) {
+			drawBox(g, Color.LIGHT_GRAY, coords[0], coords[1]);
+		}
+	}
+	
 	public void drawCurrentMino(Graphics g) {
 		int[][] pos = currentMino.getPos();
 		for (int[] coord : pos) {
