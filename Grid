@@ -14,7 +14,8 @@ import javax.swing.*;
 
 public class Grid extends JPanel implements KeyListener, ActionListener {
 
-	private static int[] keys = {KeyEvent.VK_LEFT, KeyEvent.VK_Z, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
+	private static int[] keys = {KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
+	private static int[] keys2 = {KeyEvent.VK_LEFT, KeyEvent.VK_Z, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
 	//L, rotccw, R, SD, HD, rotcw
 	
 	public static final int WIDTH = 400;
@@ -166,35 +167,35 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		}
 
 		//left
-		if (keyInt == keys[0] && !collideLeft && !onLeftEdge) {
+		if ((keyInt == keys[0] || keyInt == keys2[0]) && !collideLeft && !onLeftEdge) {
 			currentMino.changePos(0, -1);
 		}
 		
 		//rotate ccw
-		else if (keyInt == keys[1]) {
+		else if ((keyInt == keys[1] || keyInt == keys2[1])) {
 			currentMino.rotateCCW();
 		}
 
 		//right
-		else if (keyInt == keys[2] && !collideRight && !onRightEdge) {
+		else if ((keyInt == keys[2] || keyInt == keys2[2]) && !collideRight && !onRightEdge) {
 			currentMino.changePos(0, 1);
 			//System.out.println("move right");
 		}
 
 		//down
-		else if (keyInt == keys[3] && !array.checkCollision(currentMino, TetrisArray.BELOW) && !atBottom) {
+		else if ((keyInt == keys[3] || keyInt == keys2[3]) && !array.checkCollision(currentMino, TetrisArray.BELOW) && !atBottom) {
 			currentMino.changePos(1, 0);
 			//System.out.println("move down");
 		}
 
 		//space
-		else if (keyInt == keys[4]) {
+		else if ((keyInt == keys[4] || keyInt == keys2[4])) {
 			hardDrop();
 			newMino();
 		}
 		
 		//rotate cw
-		else if (keyInt == keys[5]) {
+		else if ((keyInt == keys[5] || keyInt == keys2[5])) {
 			currentMino.rotateCW();
 		}
 		repaint();
