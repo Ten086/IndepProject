@@ -119,6 +119,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		for (int r = 0; r < ROWS; r++) {
 			for (int c = 0; c < COLS; c++) {
 				Point p = array.getPoint(r, c);
+
 				if (p != Point.EMPTY && p != Point.CURRMINO) {
 					drawBox(g, p.getColor(), r, c);
 				}				
@@ -149,6 +150,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		boolean collideLeft = false;
 		boolean collideRight = false;
 
+		setCurrentMinoPoints(Point.EMPTY);
+		
 		for (int[] coord : currentMino.getPos()) {
 			int row = coord[0];
 			int col = coord[1];
@@ -198,6 +201,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		else if ((keyInt == keys[5] || keyInt == keys2[5])) {
 			currentMino.rotateCW();
 		}
+		
+		setCurrentMinoPoints(Point.CURRMINO);
 		repaint();
 	}
 
@@ -220,14 +225,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
-		/*ArrayList<Point[]> filledLines = array.getFilledLines();
-		if (!filledLines.isEmpty()) {
-			for (Point[] line : filledLines) {
-				System.out.println(line);
-			}
-			array.clearLines(filledLines);
-		}*/
-
 		boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
 		if (!currentMino.atBottom() && !collides) {
 			setCurrentMinoPoints(Point.EMPTY);
@@ -235,10 +232,16 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			setCurrentMinoPoints(Point.CURRMINO);
 		}
 
+		array.print();
+		System.out.println();
+		
+		array.clearLines();
+		
 		if (currentMino.atBottom() || collides){
 			newMino();
 		}
 
+		
 		repaint();
 	}
 }
