@@ -26,8 +26,25 @@ public enum Point {
 	}
 	
 	public String toString() {
-		return shape.getName();
+		String s = "";
+		if (this == EMPTY) {
+			s += "E";
+		}
+		else if (this == CURRMINO) {
+			s += "C";
+		}
+		else if (this == GHOST) {
+			s += "G";
+		}
+		else if (this.isSetPoint()) {
+			s += "S";
+		}
+		else {
+			s += "error";
+		}
+		return s;
 	}
+	
 	public TetrominoShape getShape() {
 		try {
 			return shape;
