@@ -112,16 +112,16 @@ public class TetrisArray {
 		return filledLines;
 	}
 	
-	public void clearLines(ArrayList<Point[]> filledLines) {
+	public void clearLines() {
+		ArrayList<Point[]> filledLines = getFilledLines();
 		ArrayList<Point[]> newArrayRows = new ArrayList<Point[]>();
 		Point[][] newArray = new Point[Grid.ROWS][Grid.COLS];
 		
-		for (Point[] row : newArray) {
-			for (Point p : row) {
-				p = Point.EMPTY;
+		for (int r = 0; r < Grid.ROWS; r++) {
+			for (int c = 0; c < Grid.COLS; c++) {
+				newArray[r][c] = Point.EMPTY;
 			}
 		}
-		
 		for (int r = Grid.ROWS - 1; r >= 0; r--) {
 			Point[] row = array[r];
 			if (!filledLines.contains(row)) {
@@ -130,9 +130,18 @@ public class TetrisArray {
 		}
 		
 		for (int r = newArrayRows.size() - 1; r >= 0; r--) {
-			newArray[r] = newArrayRows.get(r);
+			newArray[Grid.ROWS - r - 1] = newArrayRows.get(r);
 		}
 		array = newArray;
+		/*
+		 * for all rows starting from bottom:
+		 * 	 if row isn't filled
+		 *   add it to list of new rows
+		 * for new rows starting from bottom:
+		 *   add to bottom of new array
+		 * set array to new array
+		 *   
+		 */
 	}
 	
 	public void print() {
