@@ -17,7 +17,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private static int[] keys = {KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
 	private static int[] keys2 = {KeyEvent.VK_LEFT, KeyEvent.VK_Z, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
 	//L, rotccw, R, SD, HD, rotcw
-	
+
 	public static final int WIDTH = 400;
 	public static final int HEIGHT = WIDTH * 2;
 	public static final int BOXSIZE = 30;
@@ -54,7 +54,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void setUpTimer() {
-		Timer timer = new Timer(10, this);
+		Timer timer = new Timer(1000, this);
 		timer.setInitialDelay(10);
 		timer.start();
 	}
@@ -107,7 +107,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			drawBox(g, Color.LIGHT_GRAY, coords[0], coords[1]);
 		}
 	}
-	
+
 	public void drawCurrentMino(Graphics g) {
 		int[][] pos = currentMino.getPos();
 		for (int[] coord : pos) {
@@ -170,7 +170,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		if ((keyInt == keys[0] || keyInt == keys2[0]) && !collideLeft && !onLeftEdge) {
 			currentMino.changePos(0, -1);
 		}
-		
+
 		//rotate ccw
 		else if ((keyInt == keys[1] || keyInt == keys2[1])) {
 			currentMino.rotateCCW();
@@ -193,7 +193,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			hardDrop();
 			newMino();
 		}
-		
+
 		//rotate cw
 		else if ((keyInt == keys[5] || keyInt == keys2[5])) {
 			currentMino.rotateCW();
@@ -206,38 +206,39 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public void keyTyped(KeyEvent arg0) {
 	}
-	
+
 	public void hardDrop() {
 		while (!currentMino.atBottom() && !array.checkCollision(currentMino, TetrisArray.BELOW)) {
 			currentMino.changePos(1, 0);
 		}
 	}
-	
+
 	public void setCurrentMinoPoints(Point p) {
 		for (int[] coord : currentMino.getPos()) {
 			array.setPoint(coord[0], coord[1], p);
 		}
 	}
-	
+
 	public void actionPerformed(ActionEvent arg0) {
-		timerCount++;
-		ArrayList<Point[]> filledLines = array.getFilledLines();
-		array.clearLines(filledLines);
-		
-		if (timerCount % 100 == 0) {
-			timerCount = 0;
-			boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
-			if (!currentMino.atBottom() && !collides) {
-				setCurrentMinoPoints(Point.EMPTY);
-				currentMino.changePos(1, 0);
-				setCurrentMinoPoints(Point.CURRMINO);
+		/*ArrayList<Point[]> filledLines = array.getFilledLines();
+		if (!filledLines.isEmpty()) {
+			for (Point[] line : filledLines) {
+				System.out.println(line);
 			}
-			
-			if (currentMino.atBottom() || collides){
-				newMino();
-			}
-		}	
-		
+			array.clearLines(filledLines);
+		}*/
+
+		boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
+		if (!currentMino.atBottom() && !collides) {
+			setCurrentMinoPoints(Point.EMPTY);
+			currentMino.changePos(1, 0);
+			setCurrentMinoPoints(Point.CURRMINO);
+		}
+
+		if (currentMino.atBottom() || collides){
+			newMino();
+		}
+
 		repaint();
 	}
 }
