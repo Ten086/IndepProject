@@ -1,22 +1,26 @@
 import java.util.ArrayList;
 
 public class TetrisArray {
-	private Point[][] array = new Point[Grid.ROWS][Grid.HEIGHT];
+	private Point[][] array = new Point[Grid.ROWS][Grid.COLS];
 
 	public static final int BELOW = 0;
 	public static final int LEFT = 1;
 	public static final int RIGHT = 2;
 
 	public TetrisArray() {
-		for (int i = 0; i < Grid.ROWS; i++) {
-			for (int j = 0; j < Grid.HEIGHT; j++) {
-				array[i][j] = Point.EMPTY;
-			}
-		}
+		setAllEmpty();
 	}
 
 	public Point getPoint(int r, int c) {
 		return array[r][c];
+	}
+	
+	public void setAllEmpty() {
+		for (int i = 0; i < Grid.ROWS; i++) {
+			for (int j = 0; j < Grid.COLS; j++) {
+				array[i][j] = Point.EMPTY;
+			}
+		}
 	}
 
 	public void setPoint(int r, int c, Point p) {
@@ -102,6 +106,7 @@ public class TetrisArray {
 		for (Point[] row : array) {
 			if (lineFilled(row)) {
 				filledLines.add(row);
+				System.out.println("added filled line");
 			}
 		}
 		return filledLines;
@@ -111,6 +116,12 @@ public class TetrisArray {
 		ArrayList<Point[]> newArrayRows = new ArrayList<Point[]>();
 		Point[][] newArray = new Point[Grid.ROWS][Grid.COLS];
 		
+		for (Point[] row : newArray) {
+			for (Point p : row) {
+				p = Point.EMPTY;
+			}
+		}
+		
 		for (int r = Grid.ROWS - 1; r >= 0; r--) {
 			Point[] row = array[r];
 			if (!filledLines.contains(row)) {
@@ -118,8 +129,18 @@ public class TetrisArray {
 			}
 		}
 		
-		for (int r = 0; r < newArray.length; r++) {
+		for (int r = newArrayRows.size() - 1; r >= 0; r--) {
 			newArray[r] = newArrayRows.get(r);
+		}
+		array = newArray;
+	}
+	
+	public void print() {
+		for (Point[] row : array) {
+			for (Point p : row) {
+				System.out.print(p + " ");
+			}
+			System.out.println();
 		}
 	}
 }
