@@ -38,4 +38,7 @@ public enum TetrominoShape {
 		return name;
 	}
 	
+	public double[] getCOR() {
+		return COR;
+	}
 }
