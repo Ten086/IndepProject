@@ -11,6 +11,7 @@ public class Tetromino {
 		shape = s;
 		position = getInitialPosCopy();
 		color = shape.getColor();
+		COR = shape.getCOR();
 	}
 	
 	public Tetromino() {
@@ -20,6 +21,7 @@ public class Tetromino {
 		shape = shapes[randomIndex];
 		position = getInitialPosCopy();
 		color = shape.getColor();
+		COR = shape.getCOR();
 	}
 	
 	public TetrominoShape getShape() {
