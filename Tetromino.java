@@ -85,16 +85,20 @@ public class Tetromino {
 		COR[1] += cShift;
 	}
 	
-	public void rotateCCW() {
+	public void rotateCW() {
+		System.out.println(Arrays.toString(COR));
+		print(position);
 		double[][] tempPos = new double[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
 			for (int j = 0; j < position[0].length; j++) {
 				tempPos[i][j] = position[i][j] - COR[j];
 			}
 		}
+		print(tempPos);
 		Matrix tempMat = new Matrix(tempPos);
 		tempMat.rotCClws();
 		tempPos = tempMat.getMatrix();
+		print(tempPos);
 		double[][] almostPos = new double[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
 			for (int j = 0; j < position[0].length; j++) {
@@ -107,10 +111,11 @@ public class Tetromino {
 				intPos[i][j] = (int) almostPos[i][j];
 			}
 		}
+		print(intPos);
 		position = intPos;
 	}
 	
-	public void rotateCW() {
+	public void rotateCCW() {
 		double[][] tempPos = new double[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
 			for (int j = 0; j < position[0].length; j++) {
