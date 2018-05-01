@@ -225,21 +225,28 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
+		System.out.println(Arrays.toString(currentMino.getCOR()));
 		boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
 		if (!currentMino.atBottom() && !collides) {
 			setCurrentMinoPoints(Point.EMPTY);
+			
 			currentMino.changePos(1, 0);
 			setCurrentMinoPoints(Point.CURRMINO);
 		}
+		
 
-		array.print();
-		System.out.println();
+//		array.print();
+//		System.out.println();
 		
 		array.clearLines();
-		
-		if (currentMino.atBottom() || collides){
+		if (waitTick) {
 			newMino();
+			waitTick = false;
 		}
+		if (currentMino.atBottom() || collides){
+			waitTick = true;
+		}
+		
 
 		
 		repaint();
