@@ -247,8 +247,14 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			waitTick = true;
 		}
 		
-
+		System.out.println(Arrays.toString(currentMino.getCOR()));
 		
 		repaint();
+	}
+	
+	public static void print(int[][] array) {
+		for (int[] i : array) {
+			System.out.println(Arrays.toString(i));
+		}
 	}
 }
