@@ -73,6 +73,7 @@ public class Tetromino {
 	
 	public void setInitialPos() {
 		position = getInitialPosCopy();
+		COR = shape.getCOR();
 		changePos(0, 4);
 	}
 	
