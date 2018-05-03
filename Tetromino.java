@@ -6,16 +6,18 @@ public class Tetromino {
 	private int[][] position = new int[4][2];
 	private double[] COR = new double[2];
 	private Color color;
+	private TetrisArray array;
 	
-	public Tetromino(TetrominoShape s) {
+	public Tetromino(TetrominoShape s, TetrisArray arrya) {
 		shape = s;
 		position = getInitialPosCopy();
 		color = shape.getColor();
 		COR[0] = shape.getCOR()[0];
 		COR[1] = shape.getCOR()[1];
+		array = arrya;
 	}
 	
-	public Tetromino() {
+	public Tetromino(TetrisArray arrya) {
 		TetrominoShape[] shapes = {TetrominoShape.I, TetrominoShape.J, TetrominoShape.L,
 				TetrominoShape.O, TetrominoShape.S, TetrominoShape.T, TetrominoShape.Z};
 		int randomIndex = (int) (Math.random() * (shapes.length));
@@ -24,6 +26,7 @@ public class Tetromino {
 		color = shape.getColor();
 		COR[0] = shape.getCOR()[0];
 		COR[1] = shape.getCOR()[1];
+		array = arrya;
 	}
 	
 	public TetrominoShape getShape() {
@@ -90,19 +93,23 @@ public class Tetromino {
 	}
 	
 	public void rotateCW() {
-		System.out.println(Arrays.toString(COR));
 		print(position);
+		System.out.println(Arrays.toString(COR));
+		int[][] initPos = new int[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				initPos[i][j] = position[i][j];
+			}
+		}
 		double[][] tempPos = new double[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
 			for (int j = 0; j < position[0].length; j++) {
 				tempPos[i][j] = position[i][j] - COR[j];
 			}
 		}
-		print(tempPos);
 		Matrix tempMat = new Matrix(tempPos);
 		tempMat.rotCClws();
 		tempPos = tempMat.getMatrix();
-		print(tempPos);
 		double[][] almostPos = new double[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
 			for (int j = 0; j < position[0].length; j++) {
@@ -115,11 +122,21 @@ public class Tetromino {
 				intPos[i][j] = (int) almostPos[i][j];
 			}
 		}
-		print(intPos);
 		position = intPos;
+		if (!SRS(array)) {
+			position = initPos;
+		}
 	}
 	
 	public void rotateCCW() {
+		print(position);
+		System.out.println(Arrays.toString(COR));
+		int[][] initPos = new int[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				initPos[i][j] = position[i][j];
+			}
+		}
 		double[][] tempPos = new double[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
 			for (int j = 0; j < position[0].length; j++) {
@@ -142,6 +159,9 @@ public class Tetromino {
 			}
 		}
 		position = intPos;
+		if (!SRS(array)) {
+			position = initPos;
+		}
 	}
 	
 	
@@ -205,5 +225,78 @@ public class Tetromino {
 			}
 		}
 		return collides;
+	}
+	
+	
+	public boolean SRS(TetrisArray array) {
+		if (shape == TetrominoShape.I) {
+			if (!collides(array)) {
+				return true;
+			} else {
+				changePos(-2, 0);
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(3, 0);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-3, -1);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, 3);
+							if (!collides(array)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
+		} else if (shape != TetrominoShape.O) {
+			if (!collides(array)) {
+				return true;
+			} else {
+				changePos(-1, 0);
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, -3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-1, 0);
+							if (!collides(array)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
+		}
+		return false;
+	}
+	
+	public boolean collides(TetrisArray array) {
+		for (int[] coord : position) {
+			int row = coord[0];
+			int col = coord[1];
+			if (row < 0 || row >= Grid.ROWS) {
+				return true;
+			}
+			if (col < 0 || col >= Grid.COLS) {
+				return true;
+			}
+			if (array.getPoint(row, col) != Point.EMPTY && array.getPoint(row, col) != Point.CURRMINO) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
