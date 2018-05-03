@@ -11,7 +11,8 @@ public class Tetromino {
 		shape = s;
 		position = getInitialPosCopy();
 		color = shape.getColor();
-		COR = shape.getCOR();
+		COR[0] = shape.getCOR()[0];
+		COR[1] = shape.getCOR()[1];
 	}
 	
 	public Tetromino() {
@@ -21,7 +22,8 @@ public class Tetromino {
 		shape = shapes[randomIndex];
 		position = getInitialPosCopy();
 		color = shape.getColor();
-		COR = shape.getCOR();
+		COR[0] = shape.getCOR()[0];
+		COR[1] = shape.getCOR()[1];
 	}
 	
 	public TetrominoShape getShape() {
@@ -73,7 +75,8 @@ public class Tetromino {
 	
 	public void setInitialPos() {
 		position = getInitialPosCopy();
-		COR = shape.getCOR();
+		COR[0] = shape.getCOR()[0];
+		COR[1] = shape.getCOR()[1];
 		changePos(0, 4);
 	}
 	
