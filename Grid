@@ -40,17 +40,20 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	int timerCount = 0;
 
-	public static void main(String[] args) {
+	public Grid() {
 		JFrame f = new JFrame();
 		f.setMinimumSize(new Dimension(WIDTH, HEIGHT));
 		f.setResizable(false);
-		Grid grid = new Grid();
-		f.setContentPane(grid);	
+		f.setContentPane(this);	
 		f.pack();
-		f.addKeyListener(grid);
+		f.addKeyListener(this);
 		f.setVisible(true);
-		grid.setCurrentMino(new Tetromino());
-		grid.setUpTimer();
+		this.setCurrentMino(new Tetromino(array));
+		this.setUpTimer();
+	}
+	
+	public static void main(String[] args) {
+		Grid grid = new Grid();
 	}
 
 	public void setUpTimer() {
@@ -135,7 +138,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 		setCurrentMinoPoints(setPoint);
-		currentMino = new Tetromino();
+		currentMino = new Tetromino(array);
 		currentMino.setInitialPos();
 		setCurrentMinoPoints(Point.CURRMINO);
 		repaint();
