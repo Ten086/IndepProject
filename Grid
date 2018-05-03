@@ -195,6 +195,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		else if ((keyInt == keys[4] || keyInt == keys2[4])) {
 			hardDrop();
 			newMino();
+			array.clearLines();
+			repaint();
 		}
 
 		//rotate cw
@@ -233,12 +235,10 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			currentMino.changePos(1, 0);
 			setCurrentMinoPoints(Point.CURRMINO);
 		}
-		
 
 //		array.print();
 //		System.out.println();
 		
-		array.clearLines();
 		if (waitTick && currentMino.atBottom()) {
 			newMino();
 		}
@@ -246,8 +246,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		if (currentMino.atBottom() || collides){
 			waitTick = true;
 		}
-		
-		System.out.println(Arrays.toString(currentMino.getCOR()));
+		array.clearLines();
 		
 		repaint();
 	}
