@@ -1,6 +1,3 @@
-//https://stackoverflow.com/questions/14183529/paint-method-draws-outside-jframe-if-first-coord-0-0
-
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -9,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.*;
 
@@ -16,7 +14,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	private static int[] keys = {KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
 	private static int[] keys2 = {KeyEvent.VK_LEFT, KeyEvent.VK_Z, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
-	//L, rotccw, R, SD, HD, rotcw
+	//L, rotcw, R, SD, HD, rotccw
 
 	public static final int WIDTH = 400;
 	public static final int HEIGHT = WIDTH * 2;
@@ -37,6 +35,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private ArrayList<Tetromino> minos = new ArrayList<Tetromino>();
 	private Tetromino currentMino;
 	private TetrisArray array = new TetrisArray();
+	
+	boolean waitTick;
 
 	int timerCount = 0;
 
@@ -177,9 +177,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			currentMino.changePos(0, -1);
 		}
 
-		//rotate ccw
+		//rotate cw
 		else if ((keyInt == keys[1] || keyInt == keys2[1])) {
-			currentMino.rotateCCW();
+			currentMino.rotateCW();
 		}
 
 		//right
@@ -202,9 +202,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			repaint();
 		}
 
-		//rotate cw
+		//rotate ccw
 		else if ((keyInt == keys[5] || keyInt == keys2[5])) {
-			currentMino.rotateCW();
+			currentMino.rotateCCW();
 		}
 		
 		setCurrentMinoPoints(Point.CURRMINO);
@@ -230,7 +230,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
-		System.out.println(Arrays.toString(currentMino.getCOR()));
 		boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
 		if (!currentMino.atBottom() && !collides) {
 			setCurrentMinoPoints(Point.EMPTY);
@@ -238,21 +237,24 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			currentMino.changePos(1, 0);
 			setCurrentMinoPoints(Point.CURRMINO);
 		}
+		
 
 //		array.print();
 //		System.out.println();
 		
-		if (waitTick && currentMino.atBottom()) {
+		
+		if (waitTick && (currentMino.atBottom() || collides)) {
 			newMino();
 		}
 		waitTick = false;
-		if (currentMino.atBottom() || collides){
+		if (currentMino.atBottom() || collides) {
 			waitTick = true;
 		}
 		array.clearLines();
 		
 		repaint();
 	}
+	
 	
 	public static void print(int[][] array) {
 		for (int[] i : array) {
