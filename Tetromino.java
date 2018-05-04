@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.util.Arrays;
 
 public class Tetromino {
 	
@@ -55,7 +56,9 @@ public class Tetromino {
 	public int[][] getPos() {
 		return position;
 	}
-	
+	public double[] getCOR() {
+		return COR;
+	}
 	public Point getSetMino() {
 		Point setMino = null;
 		for (Point p : Point.getSetMinoList()) {
@@ -95,11 +98,15 @@ public class Tetromino {
 	public void rotateCW() {
 		print(position);
 		System.out.println(Arrays.toString(COR));
+		double[] initCOR = new double[COR.length];
 		int[][] initPos = new int[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
 			for (int j = 0; j < position[0].length; j++) {
 				initPos[i][j] = position[i][j];
 			}
+		}
+		for (int i = 0; i < COR.length; i++) {
+			initCOR[i] = COR[i];
 		}
 		double[][] tempPos = new double[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
@@ -125,6 +132,7 @@ public class Tetromino {
 		position = intPos;
 		if (!SRS(array)) {
 			position = initPos;
+			COR = initCOR;
 		}
 	}
 	
@@ -227,7 +235,6 @@ public class Tetromino {
 		return collides;
 	}
 	
-	
 	public boolean SRS(TetrisArray array) {
 		if (shape == TetrominoShape.I) {
 			if (!collides(array)) {
@@ -298,5 +305,16 @@ public class Tetromino {
 			}
 		}
 		return false;
+	}
+	
+	public static void print(int[][] array) {
+		for (int[] i : array) {
+			System.out.println(Arrays.toString(i));
+		}
+	}
+	public static void print(double[][] array) {
+		for (double[] i : array) {
+			System.out.println(Arrays.toString(i));
+		}
 	}
 }
