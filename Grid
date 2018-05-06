@@ -99,25 +99,31 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		//black to green to blue to white
+		//northern lights: 50, i, 100
+		//fire: 255, i, 100
+		//earth: 50, 90, i
+
 		/*for (int i = 0; i < 255; i++) {
-			g.setColor(new Color(0, i, 0));
-			g.fillRect(0, i, WIDTH, 1);
+			g.setColor(new Color(50, 90, i));
+			g.fillRect(0, i * 3, WIDTH, 3);	
 		}
-		for (int i = 0; i < 255; i++) {
-			g.setColor(new Color(0, 255, i));
-			g.fillRect(0, 255 + i, WIDTH, 1);
-		}
-		for (int i = 0; i < 255; i++) {
-			g.setColor(new Color(i, 255, 255));
-			g.fillRect(0, 255 + 255 + i, WIDTH, 1);
-		}*/
-
-		for (int i = 0; i < 255; i++) {
-			g.setColor(new Color(50, i, 100));
-			g.fillRect(0, i * 4, WIDTH, 4);
-		}
-
+		g.fillRect(0, 255 * 3, WIDTH, 50);*/
+		
+		//rainbow
+		g.setColor(new Color(226, 56, 56));
+		g.fillRect(0, 0, WIDTH, HEIGHT / 6);
+		g.setColor(new Color(251, 128, 35));
+		g.fillRect(0, (HEIGHT / 6), WIDTH, HEIGHT / 6);
+		g.setColor(new Color(255, 182, 51));
+		g.fillRect(0, (HEIGHT / 6) * 2, WIDTH, HEIGHT / 6);
+		g.setColor(new Color(91, 187, 80));
+		g.fillRect(0, (HEIGHT / 6) * 3, WIDTH, HEIGHT / 6);
+		g.setColor(new Color(3, 156, 223));
+		g.fillRect(0, (HEIGHT / 6) * 4, WIDTH, HEIGHT / 6);
+		g.setColor(new Color(151, 61, 149));
+		g.fillRect(0, (HEIGHT / 6) * 5, WIDTH, HEIGHT / 6);
+		 
+		
 		g.setFont(new Font("Dialog", Font.BOLD, 16));
 		g.drawString("NEXT", 3 * (WIDTH / 4), 3 * (YMARGIN / 4));
 
@@ -164,8 +170,18 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void drawBox(Graphics g, Color c, int row, int col) {
 		int xPos = GRIDXMARGIN + (col * BOXSIZE);
 		int yPos = YMARGIN + (row * BOXSIZE);
-		g.setColor(c);
+		/*actual code:
+		//g.setColor(c);
+		//g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
+		 */
+		 
+		// /* lol just trolling you can delete this
+		g.setColor(Color.RED);
 		g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Dialog", Font.BOLD, 20));
+		g.drawString("B", xPos + BOXSIZE / 3, yPos + BOXSIZE - BOXSIZE / 3);
+		// */
 	}
 
 	public void drawNextBox(Graphics g, Color c, int index, int row, int col) {
