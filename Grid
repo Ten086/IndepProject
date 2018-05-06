@@ -14,6 +14,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	private static int[] thombusKeys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_UP, KeyEvent.VK_CONTROL};
 	private static int[] heblenKeys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_X, KeyEvent.VK_Z};
+	private static int[] leftKeys = {KeyEvent.VK_G, KeyEvent.VK_J, KeyEvent.VK_H, KeyEvent.VK_SPACE, KeyEvent.VK_Z, KeyEvent.VK_X};
+	private static int[] rightKeys = {KeyEvent.VK_1, KeyEvent.VK_5, KeyEvent.VK_3, KeyEvent.VK_2, KeyEvent.VK_ALT, KeyEvent.VK_CONTROL};
 	//L, R, SD, HD, rotCW, rotCCW
 
 	public static final int WIDTH = 500;
@@ -25,7 +27,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public static final int YMARGIN = (HEIGHT - (ROWS * BOXSIZE)) / 2;
 	public static final int GRIDXMARGIN = XMARGIN / 4;
 	public static final int NEXTGRIDXMARGIN = (2 * GRIDXMARGIN) + (BOXSIZE * COLS);
-
+	public static final int NEXTBOXBIGSIZE = 3 * BOXSIZE;
+	public static final int NEXTBOXSIZE = 3 * (BOXSIZE / 5);
 	public static final Color LIGHTBLUE = new Color(3, 243, 241);
 	public static final Color DARKBLUE = new Color (3, 0, 235);
 	public static final Color ORANGE = new Color(246, 155, 1);
@@ -38,12 +41,20 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
 	private Tetromino currentMino;
 	private TetrisArray array = new TetrisArray();
-
+	private boolean twoPlayer = false;
+	private Grid opponent;
+	
+	
 	boolean waitTick;
 
 	public Grid() {
 		JFrame f = new JFrame();
-		f.setMinimumSize(new Dimension(WIDTH, HEIGHT));
+		if (twoPlayer) {
+			f.setMinimumSize(new Dimension(2 * WIDTH, HEIGHT));
+		}
+		else {
+			f.setMinimumSize(new Dimension(WIDTH, HEIGHT));
+		}
 		f.setResizable(false);
 		f.setContentPane(this);	
 		f.pack();
@@ -97,12 +108,12 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void drawNextGrid(Graphics g) {
-		int boxSize = BOXSIZE * 4;	
+		int size = NEXTBOXBIGSIZE;
 		for (int r = 0; r < 5; r++) {
 			g.setColor(Color.DARK_GRAY);
-			g.fillRect(NEXTGRIDXMARGIN, (r * boxSize) + YMARGIN, boxSize, boxSize);
+			g.fillRect(NEXTGRIDXMARGIN, (r * size) + YMARGIN, size, size);
 			g.setColor(Color.BLACK);
-			g.drawRect(NEXTGRIDXMARGIN, (r * boxSize) + YMARGIN, boxSize, boxSize);
+			g.drawRect(NEXTGRIDXMARGIN, (r * size) + YMARGIN, size, size);
 		}
 	}
 
@@ -114,10 +125,11 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 	
 	public void drawNextBox(Graphics g, Color c, int index, int row, int col) {
-		int tempSize = 4 * (BOXSIZE / 5);
-		int xPos = NEXTGRIDXMARGIN + (col * tempSize) + tempSize;
+		int bigSize = NEXTBOXBIGSIZE;
+		int smolSize = NEXTBOXSIZE;
+		int xPos = NEXTGRIDXMARGIN + (col * smolSize) + smolSize;
 		int xShift = 0;
-		int yPos = YMARGIN + (row * tempSize) + (BOXSIZE * 4 * index) + tempSize;
+		int yPos = YMARGIN + (row * smolSize) + (BOXSIZE * 3 * index) + smolSize;
 		int yShift = 0;
 		Color iColor = TetrominoShape.I.getColor();
 		Color oColor = TetrominoShape.O.getColor();
@@ -125,18 +137,18 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		Color jColor = TetrominoShape.J.getColor();
 		g.setColor(c);
 		if (c.equals(iColor)) {
-			xShift = -1 * (tempSize / 2);
+			xShift = -1 * (smolSize / 2);
 		}
 		else if (c.equals(oColor) || c.equals(lColor) || c.equals(jColor)) {
-			xShift = tempSize / 2;
+			xShift = smolSize / 2;
 		}
 		if (!(c.equals(lColor) || c.equals(jColor) || c.equals(iColor))) {
-			yShift = tempSize / 2;
+			yShift = smolSize / 2;
 		}
 		else if (c.equals(iColor)) {
-			yShift = tempSize;
+			yShift = smolSize;
 		}
-		g.fillRect(xPos + 1 + xShift, yPos + 1 + yShift, tempSize - 1, tempSize - 1);
+		g.fillRect(xPos + 1 + xShift, yPos + 1 + yShift, smolSize - 1, smolSize - 1);
 	}
 
 	
