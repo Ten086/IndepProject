@@ -1,9 +1,7 @@
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -32,6 +30,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public static final int NEXTGRIDXMARGIN = (2 * GRIDXMARGIN) + (BOXSIZE * COLS);
 	public static final int NEXTBOXBIGSIZE = 3 * BOXSIZE;
 	public static final int NEXTBOXSIZE = 3 * (BOXSIZE / 5);
+	
 	public static final Color LIGHTBLUE = new Color(3, 243, 241);
 	public static final Color DARKBLUE = new Color (3, 0, 235);
 	public static final Color ORANGE = new Color(246, 155, 1);
@@ -81,8 +80,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		f.setVisible(true);
 	}
 	
-	public static void main(String[] args) {	
-		twoPlayerSetup(new Grid(), new Grid());
+	public static void main(String[] args) {
+		singlePlayerSetup(new Grid());
+		//twoPlayerSetup(new Grid(), new Grid());
 	}
 	
 
@@ -148,7 +148,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 	
 	public void drawNextBox(Graphics g, Color c, int index, int row, int col) {
-		int bigSize = NEXTBOXBIGSIZE;
 		int smolSize = NEXTBOXSIZE;
 		int xPos = NEXTGRIDXMARGIN + (col * smolSize) + smolSize;
 		int xShift = 0;
@@ -159,18 +158,21 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		Color lColor = TetrominoShape.L.getColor();
 		Color jColor = TetrominoShape.J.getColor();
 		g.setColor(c);
+		
 		if (c.equals(iColor)) {
 			xShift = -1 * (smolSize / 2);
 		}
-		else if (c.equals(oColor) || c.equals(lColor) || c.equals(jColor)) {
+		else if (c.equals(oColor)) {
 			xShift = smolSize / 2;
 		}
-		if (!(c.equals(lColor) || c.equals(jColor) || c.equals(iColor))) {
+		
+		if (!c.equals(iColor)) {
 			yShift = smolSize / 2;
 		}
-		else if (c.equals(iColor)) {
+		else {
 			yShift = smolSize;
 		}
+		
 		g.fillRect(xPos + 1 + xShift, yPos + 1 + yShift, smolSize - 1, smolSize - 1);
 	}
 
@@ -361,7 +363,10 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		if (currentMino.atBottom() || collides) {
 			waitTick = true;
 		}
-		array.clearLines();
+		//array.clearLines();
+		if (array.clearLines() > 0) {
+			System.out.println("SEND LINES");
+		}
 
 		repaint();
 	}
