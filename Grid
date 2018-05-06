@@ -30,7 +30,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public static final int NEXTGRIDXMARGIN = (2 * GRIDXMARGIN) + (BOXSIZE * COLS);
 	public static final int NEXTBOXBIGSIZE = 3 * BOXSIZE;
 	public static final int NEXTBOXSIZE = 3 * (BOXSIZE / 5);
-	
+
 	public static final Color LIGHTBLUE = new Color(3, 243, 241);
 	public static final Color DARKBLUE = new Color (3, 0, 235);
 	public static final Color ORANGE = new Color(246, 155, 1);
@@ -43,7 +43,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
 	private Tetromino currentMino;
 	private TetrisArray array = new TetrisArray();
-	
+
 	boolean waitTick;
 
 	public Grid() {
@@ -65,7 +65,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		f.addKeyListener(player);
 		f.setVisible(true);
 	}
-	
+
 	public static void twoPlayerSetup(Grid p1, Grid p2) {
 		JFrame f = new JFrame();
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,37 +79,58 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		f.addKeyListener(p2);
 		f.setVisible(true);
 	}
-	
+
 	public static void main(String[] args) {
 		singlePlayerSetup(new Grid());
 		//twoPlayerSetup(new Grid(), new Grid());
 	}
-	
+
 
 	public void setUpTimer() {
 		Timer timer = new Timer(1000, this);
 		timer.setInitialDelay(10);
 		timer.start();
 	}
-	
+
 	public void setKeys(int[] keyList) {
 		keys = keyList;
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+		//black to green to blue to white
+		/*for (int i = 0; i < 255; i++) {
+			g.setColor(new Color(0, i, 0));
+			g.fillRect(0, i, WIDTH, 1);
+		}
+		for (int i = 0; i < 255; i++) {
+			g.setColor(new Color(0, 255, i));
+			g.fillRect(0, 255 + i, WIDTH, 1);
+		}
+		for (int i = 0; i < 255; i++) {
+			g.setColor(new Color(i, 255, 255));
+			g.fillRect(0, 255 + 255 + i, WIDTH, 1);
+		}*/
+
+		for (int i = 0; i < 255; i++) {
+			g.setColor(new Color(50, i, 100));
+			g.fillRect(0, i * 4, WIDTH, 4);
+		}
+
+		g.setFont(new Font("Dialog", Font.BOLD, 16));
+		g.drawString("NEXT", 3 * (WIDTH / 4), 3 * (YMARGIN / 4));
+
 		// /* lol just trolling you can delete this	
 		g.setColor(Color.RED);
 		g.fillRect(WIDTH / 6, YMARGIN / 4, 50, 50);
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Dialog", Font.BOLD, 50));
 		g.drawString("B", WIDTH / 6 + 8, YMARGIN / 2 + 20);
-		g.setColor(Color.BLACK);
 		g.setFont(new Font("Dialog", Font.BOLD, 50));
 		g.drawString("etris", WIDTH / 3 - 30, YMARGIN / 2 + 20);
 		// */
-		g.setFont(new Font("Dialog", Font.BOLD, 16));
-		g.drawString("NEXT", 3 * (WIDTH / 4), 3 * (YMARGIN / 4));
+
 		drawGrid(g);
 		drawNextGrid(g);
 		drawNextMinos(g);
@@ -146,7 +167,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		g.setColor(c);
 		g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
 	}
-	
+
 	public void drawNextBox(Graphics g, Color c, int index, int row, int col) {
 		int smolSize = NEXTBOXSIZE;
 		int xPos = NEXTGRIDXMARGIN + (col * smolSize) + smolSize;
@@ -158,25 +179,25 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		Color lColor = TetrominoShape.L.getColor();
 		Color jColor = TetrominoShape.J.getColor();
 		g.setColor(c);
-		
+
 		if (c.equals(iColor)) {
 			xShift = -1 * (smolSize / 2);
 		}
 		else if (c.equals(oColor)) {
 			xShift = smolSize / 2;
 		}
-		
+
 		if (!c.equals(iColor)) {
 			yShift = smolSize / 2;
 		}
 		else {
 			yShift = smolSize;
 		}
-		
+
 		g.fillRect(xPos + 1 + xShift, yPos + 1 + yShift, smolSize - 1, smolSize - 1);
 	}
 
-	
+
 	public void drawNextMinos(Graphics g) {	
 		for (int i = 0; i < nextMinos.size(); i++) {
 			Tetromino mino = nextMinos.get(i);
@@ -188,10 +209,10 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 	}
-	
+
 	public void drawGhostPiece(Graphics g) {
 		g.setColor(Color.LIGHT_GRAY);
-		
+
 		int[][] pos = new int[4][2];
 		for (int i = 0; i < pos.length; i++) {
 			for (int j = 0; j < pos[0].length; j++) {
@@ -228,7 +249,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 	}
-	
+
 	public void setCurrentMino(Tetromino mino) {
 		currentMino = mino;
 	}
@@ -363,11 +384,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		if (currentMino.atBottom() || collides) {
 			waitTick = true;
 		}
-		//array.clearLines();
-		if (array.clearLines() > 0) {
-			System.out.println("SEND LINES");
-		}
 
+		array.clearLines();
 		repaint();
 	}
 
