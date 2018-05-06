@@ -1,6 +1,8 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -37,42 +39,51 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public static final Color PURPLE = new Color(164, 4, 229);
 	public static final Color RED = new Color(234, 4, 4);
 
-	private int[] keys = new int[5];
+	private int[] keys = heblenKeys;
 	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
 	private Tetromino currentMino;
 	private TetrisArray array = new TetrisArray();
-	private boolean twoPlayer = false;
-	private Grid opponent;
-	
 	
 	boolean waitTick;
 
 	public Grid() {
-		JFrame f = new JFrame();
-		if (twoPlayer) {
-			f.setMinimumSize(new Dimension(2 * WIDTH, HEIGHT));
-		}
-		else {
-			f.setMinimumSize(new Dimension(WIDTH, HEIGHT));
-		}
-		f.setResizable(false);
-		f.setContentPane(this);	
-		f.pack();
-		f.addKeyListener(this);
-		f.setVisible(true);
-		setKeys(thombusKeys);
 		for (int i = 0; i < 6; i++) {
-			addNextMino(new Tetromino(this.array));
+			addNextMino(new Tetromino(array));
 		}
 		setCurrentMino(nextMinos.remove(0));
 		currentMino.setInitialPos();
 		setUpTimer();
 	}
 
-	public static void main(String[] args) {
-		Grid grid = new Grid();
-		grid.setKeys(heblenKeys);
+	public static void singlePlayerSetup(Grid player) {
+		JFrame f = new JFrame();
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setMinimumSize(new Dimension(WIDTH, HEIGHT));
+		f.add(player);
+		f.setResizable(false);
+		f.pack();
+		f.addKeyListener(player);
+		f.setVisible(true);
 	}
+	
+	public static void twoPlayerSetup(Grid p1, Grid p2) {
+		JFrame f = new JFrame();
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setMinimumSize(new Dimension(2 * WIDTH, HEIGHT));
+		f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.X_AXIS));
+		f.add(p1);
+		f.add(p2);
+		f.setResizable(false);
+		f.pack();
+		f.addKeyListener(p1);
+		f.addKeyListener(p2);
+		f.setVisible(true);
+	}
+	
+	public static void main(String[] args) {	
+		twoPlayerSetup(new Grid(), new Grid());
+	}
+	
 
 	public void setUpTimer() {
 		Timer timer = new Timer(1000, this);
