@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -97,7 +98,18 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawString("Tetris", WIDTH / 3, YMARGIN / 2);
+		// /* lol just trolling you can delete this	
+		g.setColor(Color.RED);
+		g.fillRect(WIDTH / 6, YMARGIN / 4, 50, 50);
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Dialog", Font.BOLD, 50));
+		g.drawString("B", WIDTH / 6 + 8, YMARGIN / 2 + 20);
+		g.setColor(Color.BLACK);
+		g.setFont(new Font("Dialog", Font.BOLD, 50));
+		g.drawString("etris", WIDTH / 3 - 30, YMARGIN / 2 + 20);
+		// */
+		g.setFont(new Font("Dialog", Font.BOLD, 16));
+		g.drawString("NEXT", 3 * (WIDTH / 4), 3 * (YMARGIN / 4));
 		drawGrid(g);
 		drawNextGrid(g);
 		drawNextMinos(g);
