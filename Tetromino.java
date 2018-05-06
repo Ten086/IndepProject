@@ -83,7 +83,12 @@ public class Tetromino {
 		position = getInitialPosCopy();
 		COR[0] = shape.getCOR()[0];
 		COR[1] = shape.getCOR()[1];
-		changePos(0, 4);
+		if (shape == TetrominoShape.O) {
+			changePos(0, 4);
+		}
+		else {
+			changePos(0, 3);
+		}
 	}
 	
 	public void changePos(int rShift, int cShift) {
