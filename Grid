@@ -116,13 +116,31 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void drawNextBox(Graphics g, Color c, int index, int row, int col) {
 		int tempSize = 4 * (BOXSIZE / 5);
 		int xPos = NEXTGRIDXMARGIN + (col * tempSize) + tempSize;
+		int xShift = 0;
 		int yPos = YMARGIN + (row * tempSize) + (BOXSIZE * 4 * index) + tempSize;
+		int yShift = 0;
+		Color iColor = TetrominoShape.I.getColor();
+		Color oColor = TetrominoShape.O.getColor();
+		Color lColor = TetrominoShape.L.getColor();
+		Color jColor = TetrominoShape.J.getColor();
 		g.setColor(c);
-		g.fillRect(xPos + 1, yPos + 1, tempSize - 1, tempSize - 1);
+		if (c.equals(iColor)) {
+			xShift = -1 * (tempSize / 2);
+		}
+		else if (c.equals(oColor) || c.equals(lColor) || c.equals(jColor)) {
+			xShift = tempSize / 2;
+		}
+		if (!(c.equals(lColor) || c.equals(jColor) || c.equals(iColor))) {
+			yShift = tempSize / 2;
+		}
+		else if (c.equals(iColor)) {
+			yShift = tempSize;
+		}
+		g.fillRect(xPos + 1 + xShift, yPos + 1 + yShift, tempSize - 1, tempSize - 1);
 	}
 
 	
-	public void drawNextMinos(Graphics g) {
+	public void drawNextMinos(Graphics g) {	
 		for (int i = 0; i < nextMinos.size(); i++) {
 			Tetromino mino = nextMinos.get(i);
 			for (int[] coords : mino.getPos()) {
