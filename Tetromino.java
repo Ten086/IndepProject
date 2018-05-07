@@ -8,6 +8,7 @@ public class Tetromino {
 	private double[] COR = new double[2];
 	private Color color;
 	private TetrisArray array;
+	private int rotstate = 0;
 	
 	public Tetromino(TetrominoShape s, TetrisArray arrya) {
 		shape = s;
@@ -101,8 +102,6 @@ public class Tetromino {
 	}
 	
 	public void rotateCW() {
-		print(position);
-		System.out.println(Arrays.toString(COR));
 		double[] initCOR = new double[COR.length];
 		int[][] initPos = new int[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
@@ -135,15 +134,16 @@ public class Tetromino {
 			}
 		}
 		position = intPos;
+		ceilKick(array);
+		rotstate = ((rotstate + 1) % 4 + 4) % 4;
 		if (!SRS(array)) {
 			position = initPos;
 			COR = initCOR;
+			rotstate = ((rotstate - 1) % 4 + 4) % 4;
 		}
 	}
 	
 	public void rotateCCW() {
-		print(position);
-		System.out.println(Arrays.toString(COR));
 		int[][] initPos = new int[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
 			for (int j = 0; j < position[0].length; j++) {
@@ -172,8 +172,11 @@ public class Tetromino {
 			}
 		}
 		position = intPos;
+		ceilKick(array);
+		rotstate = ((rotstate - 1) % 4 + 4) % 4;
 		if (!SRS(array)) {
 			position = initPos;
+			rotstate = ((rotstate + 1) % 4 + 4) % 4;
 		}
 	}
 	
@@ -241,36 +244,8 @@ public class Tetromino {
 	}
 	
 	public boolean SRS(TetrisArray array) {
-		if (shape == TetrominoShape.I) {
-			if (!collides(array)) {
-				return true;
-			} else {
-				changePos(-2, 0);
-				if (!collides(array)) {
-					return true;
-				} else {
-					changePos(3, 0);
-					if (!collides(array)) {
-						return true;
-					} else {
-						changePos(-3, -1);
-						if (!collides(array)) {
-							return true;
-						} else {
-							changePos(3, 3);
-							if (!collides(array)) {
-								return true;
-							}
-						}
-					}
-				}
-			}
-			return false;
-		} else if (shape != TetrominoShape.O) {
-			if (!collides(array)) {
-				return true;
-			} else {
-				changePos(-1, 0);
+		if (rotstate == 0) {
+			if (shape == TetrominoShape.I) {
 				if (!collides(array)) {
 					return true;
 				} else {
@@ -278,21 +253,218 @@ public class Tetromino {
 					if (!collides(array)) {
 						return true;
 					} else {
-						changePos(1, -3);
+						changePos(0, -3);
 						if (!collides(array)) {
 							return true;
 						} else {
-							changePos(-1, 0);
+							changePos(-2, 3);
 							if (!collides(array)) {
 								return true;
+							} else {
+								changePos(3, -3);
+								if (!collides(array)) {
+									return true;
+								}
 							}
 						}
 					}
 				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, 1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, -1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
 			}
-			return false;
+		} else if (rotstate == 1) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-1, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(1, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-1, 0);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 2) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(2, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, -1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 3) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, -3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(1, 3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-3, -3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-3, -1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
 		}
+		
 		return false;
+	}
+	
+	public void ceilKick(TetrisArray array) {
+		int max = 0;
+		for (int[] coord : position) {
+			if (coord[0] < 0) {
+				max = -coord[0];
+			}
+		}
+		changePos(max, 0);
 	}
 	
 	public boolean collides(TetrisArray array) {
