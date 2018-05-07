@@ -136,7 +136,7 @@ public class Tetromino {
 		position = intPos;
 		ceilKick(array);
 		rotstate = ((rotstate + 1) % 4 + 4) % 4;
-		if (!SRS(array)) {
+		if (!CWSRS(array)) {
 			position = initPos;
 			COR = initCOR;
 			rotstate = ((rotstate - 1) % 4 + 4) % 4;
@@ -174,7 +174,7 @@ public class Tetromino {
 		position = intPos;
 		ceilKick(array);
 		rotstate = ((rotstate - 1) % 4 + 4) % 4;
-		if (!SRS(array)) {
+		if (!CCWSRS(array)) {
 			position = initPos;
 			rotstate = ((rotstate + 1) % 4 + 4) % 4;
 		}
@@ -243,7 +243,7 @@ public class Tetromino {
 		return collides;
 	}
 	
-	public boolean SRS(TetrisArray array) {
+	public boolean CWSRS(TetrisArray array) {
 		if (rotstate == 0) {
 			if (shape == TetrominoShape.I) {
 				if (!collides(array)) {
@@ -334,11 +334,11 @@ public class Tetromino {
 						if (!collides(array)) {
 							return true;
 						} else {
-							changePos(1, -3);
+							changePos(-3, 1);
 							if (!collides(array)) {
 								return true;
 							} else {
-								changePos(-1, 0);
+								changePos(0, -1);
 								if (!collides(array)) {
 									return true;
 								}
@@ -443,6 +443,220 @@ public class Tetromino {
 								return true;
 							} else {
 								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean CCWSRS(TetrisArray array) {
+		if (rotstate == 0) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(2, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-3, -1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 1) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, -3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(1, 3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-3, -3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, -1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 2) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, -3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-2, 3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(3, -3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-3, 1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, -1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 3) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-1, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, 1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, -1);
 								if (!collides(array)) {
 									return true;
 								}
