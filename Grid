@@ -1,413 +1,710 @@
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.*;
-
-public class Grid extends JPanel implements KeyListener, ActionListener {
-
-	private static int[] thombusKeys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_UP, KeyEvent.VK_CONTROL};
-	private static int[] heblenKeys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_X, KeyEvent.VK_Z};
-	private static int[] leftKeys = {KeyEvent.VK_G, KeyEvent.VK_J, KeyEvent.VK_H, KeyEvent.VK_SPACE, KeyEvent.VK_Z, KeyEvent.VK_X};
-	private static int[] rightKeys = {KeyEvent.VK_1, KeyEvent.VK_5, KeyEvent.VK_3, KeyEvent.VK_2, KeyEvent.VK_ALT, KeyEvent.VK_CONTROL};
-	//L, R, SD, HD, rotCW, rotCCW
-
-	public static final int WIDTH = 500;
-	public static final int HEIGHT = 800;
-	public static final int BOXSIZE = 30;
-	public static final int ROWS = 20;
-	public static final int COLS = 10;
-	public static final int XMARGIN = (WIDTH - (COLS * BOXSIZE)) / 2;
-	public static final int YMARGIN = (HEIGHT - (ROWS * BOXSIZE)) / 2;
-	public static final int GRIDXMARGIN = XMARGIN / 4;
-	public static final int NEXTGRIDXMARGIN = (2 * GRIDXMARGIN) + (BOXSIZE * COLS);
-	public static final int NEXTBOXBIGSIZE = 3 * BOXSIZE;
-	public static final int NEXTBOXSIZE = 3 * (BOXSIZE / 5);
-
-	public static final Color LIGHTBLUE = new Color(3, 243, 241);
-	public static final Color DARKBLUE = new Color (3, 0, 235);
-	public static final Color ORANGE = new Color(246, 155, 1);
-	public static final Color YELLOW = new Color(237, 242, 6);
-	public static final Color GREEN = new Color (5, 239, 7);
-	public static final Color PURPLE = new Color(164, 4, 229);
-	public static final Color RED = new Color(234, 4, 4);
-
-	private int[] keys = heblenKeys;
-	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
-	private Tetromino currentMino;
-	private TetrisArray array = new TetrisArray();
-
-	boolean waitTick;
-
-	public Grid() {
-		for (int i = 0; i < 6; i++) {
-			addNextMino(new Tetromino(array));
+public class Tetromino {
+	
+	private TetrominoShape shape;
+	private int[][] position = new int[4][2];
+	private double[] COR = new double[2];
+	private Color color;
+	private TetrisArray array;
+	private int rotstate = 0;
+	
+	public Tetromino(TetrominoShape s, TetrisArray arrya) {
+		shape = s;
+		position = getInitialPosCopy();
+		color = shape.getColor();
+		COR[0] = shape.getCOR()[0];
+		COR[1] = shape.getCOR()[1];
+		array = arrya;
+	}
+	
+	public Tetromino(TetrisArray arrya) {
+		TetrominoShape[] shapes = {TetrominoShape.I, TetrominoShape.J, TetrominoShape.L,
+				TetrominoShape.O, TetrominoShape.S, TetrominoShape.T, TetrominoShape.Z};
+		int randomIndex = (int) (Math.random() * (shapes.length));
+		shape = shapes[randomIndex];
+		position = getInitialPosCopy();
+		color = shape.getColor();
+		COR[0] = shape.getCOR()[0];
+		COR[1] = shape.getCOR()[1];
+		array = arrya;
+	}
+	
+	public TetrominoShape getShape() {
+		return shape;
+	}
+	
+	public Color getColor() {
+		return color;
+	}
+	public void printPos() {
+		for (int[] coords : position) {
+			System.out.print("row " + coords[0] + ", col " + coords[1] + " | ");
 		}
-		setCurrentMino(nextMinos.remove(0));
-		currentMino.setInitialPos();
-		setUpTimer();
 	}
-
-	public static void singlePlayerSetup(Grid player) {
-		JFrame f = new JFrame();
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setMinimumSize(new Dimension(WIDTH, HEIGHT));
-		f.add(player);
-		f.setResizable(false);
-		f.pack();
-		f.addKeyListener(player);
-		f.setVisible(true);
-	}
-
-	public static void twoPlayerSetup(Grid p1, Grid p2) {
-		JFrame f = new JFrame();
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setMinimumSize(new Dimension(2 * WIDTH, HEIGHT));
-		f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.X_AXIS));
-		f.add(p1);
-		f.add(p2);
-		f.setResizable(false);
-		f.pack();
-		f.addKeyListener(p1);
-		f.addKeyListener(p2);
-		f.setVisible(true);
-	}
-
-	public static void main(String[] args) {
-		singlePlayerSetup(new Grid());
-		//twoPlayerSetup(new Grid(), new Grid());
-	}
-
-
-	public void setUpTimer() {
-		Timer timer = new Timer(1000, this);
-		timer.setInitialDelay(10);
-		timer.start();
-	}
-
-	public void setKeys(int[] keyList) {
-		keys = keyList;
-	}
-
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
-		//northern lights: 50, i, 100
-		//fire: 255, i, 100
-		//earth: 50, 90, i
-
-		/*for (int i = 0; i < 255; i++) {
-			g.setColor(new Color(50, 90, i));
-			g.fillRect(0, i * 3, WIDTH, 3);	
-		}
-		g.fillRect(0, 255 * 3, WIDTH, 50);*/
-		
-		//rainbow
-		g.setColor(new Color(226, 56, 56));
-		g.fillRect(0, 0, WIDTH, HEIGHT / 6);
-		g.setColor(new Color(251, 128, 35));
-		g.fillRect(0, (HEIGHT / 6), WIDTH, HEIGHT / 6);
-		g.setColor(new Color(255, 182, 51));
-		g.fillRect(0, (HEIGHT / 6) * 2, WIDTH, HEIGHT / 6);
-		g.setColor(new Color(91, 187, 80));
-		g.fillRect(0, (HEIGHT / 6) * 3, WIDTH, HEIGHT / 6);
-		g.setColor(new Color(3, 156, 223));
-		g.fillRect(0, (HEIGHT / 6) * 4, WIDTH, HEIGHT / 6);
-		g.setColor(new Color(151, 61, 149));
-		g.fillRect(0, (HEIGHT / 6) * 5, WIDTH, HEIGHT / 6);
-		 
-		
-		g.setFont(new Font("Dialog", Font.BOLD, 16));
-		g.drawString("NEXT", 3 * (WIDTH / 4), 3 * (YMARGIN / 4));
-
-		// /* lol just trolling you can delete this	
-		g.setColor(Color.RED);
-		g.fillRect(WIDTH / 6, YMARGIN / 4, 50, 50);
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("Dialog", Font.BOLD, 50));
-		g.drawString("B", WIDTH / 6 + 8, YMARGIN / 2 + 20);
-		g.setFont(new Font("Dialog", Font.BOLD, 50));
-		g.drawString("etris", WIDTH / 3 - 30, YMARGIN / 2 + 20);
-		// */
-
-		drawGrid(g);
-		drawNextGrid(g);
-		drawNextMinos(g);
-		if (!currentMino.atBottom()) {
-			drawGhostPiece(g);
-		}
-		drawCurrentMino(g);
-		drawFromArray(g);
-	}
-
-	public void drawGrid(Graphics g) {	
-		for (int c = 0; c < COLS; c++) {
-			for (int r = 0; r < ROWS; r++) {
-				drawBox(g, Color.DARK_GRAY, r, c);
-				g.setColor(Color.BLACK);
-				g.drawRect((c * BOXSIZE) + GRIDXMARGIN, (r * BOXSIZE) + YMARGIN, BOXSIZE, BOXSIZE);
+	
+	public int[][] getInitialPosCopy() {
+		int[][] orig = shape.getCoords();
+		int[][] copy = new int[4][2];
+		for (int i = 0; i < orig.length; i++) {
+			for (int j = 0; j < orig[0].length; j++) {
+				copy[i][j] = orig[i][j];
 			}
 		}
+		return copy;
 	}
-
-	public void drawNextGrid(Graphics g) {
-		int size = NEXTBOXBIGSIZE;
-		for (int r = 0; r < 5; r++) {
-			g.setColor(Color.DARK_GRAY);
-			g.fillRect(NEXTGRIDXMARGIN, (r * size) + YMARGIN, size, size);
-			g.setColor(Color.BLACK);
-			g.drawRect(NEXTGRIDXMARGIN, (r * size) + YMARGIN, size, size);
-		}
+	public int[][] getPos() {
+		return position;
 	}
-
-	public void drawBox(Graphics g, Color c, int row, int col) {
-		int xPos = GRIDXMARGIN + (col * BOXSIZE);
-		int yPos = YMARGIN + (row * BOXSIZE);
-		/*actual code:
-		//g.setColor(c);
-		//g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
-		 */
-		 
-		// /* lol just trolling you can delete this
-		g.setColor(Color.RED);
-		g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("Dialog", Font.BOLD, 20));
-		g.drawString("B", xPos + BOXSIZE / 3, yPos + BOXSIZE - BOXSIZE / 3);
-		// */
+	public double[] getCOR() {
+		return COR;
 	}
-
-	public void drawNextBox(Graphics g, Color c, int index, int row, int col) {
-		int smolSize = NEXTBOXSIZE;
-		int xPos = NEXTGRIDXMARGIN + (col * smolSize) + smolSize;
-		int xShift = 0;
-		int yPos = YMARGIN + (row * smolSize) + (BOXSIZE * 3 * index) + smolSize;
-		int yShift = 0;
-		Color iColor = TetrominoShape.I.getColor();
-		Color oColor = TetrominoShape.O.getColor();
-		Color lColor = TetrominoShape.L.getColor();
-		Color jColor = TetrominoShape.J.getColor();
-		g.setColor(c);
-
-		if (c.equals(iColor)) {
-			xShift = -1 * (smolSize / 2);
+	public Point getSetMino() {
+		Point setMino = null;
+		for (Point p : Point.getSetMinoList()) {
+			if (shape == p.getShape()) {
+				setMino = p;
+			}
 		}
-		else if (c.equals(oColor)) {
-			xShift = smolSize / 2;
+		return setMino;
+	}
+	
+	public int[] getLowestCoord() {
+		int[] lowest = new int[2];
+		for (int[] coords : position) {
+			if (coords[0] > lowest[0]) {
+				lowest = coords;
+			}
 		}
-
-		if (!c.equals(iColor)) {
-			yShift = smolSize / 2;
+		return lowest;
+	}
+	
+	public void setInitialPos() {
+		position = getInitialPosCopy();
+		COR[0] = shape.getCOR()[0];
+		COR[1] = shape.getCOR()[1];
+		if (shape == TetrominoShape.O) {
+			changePos(0, 4);
 		}
 		else {
-			yShift = smolSize;
+			changePos(0, 3);
 		}
-
-		g.fillRect(xPos + 1 + xShift, yPos + 1 + yShift, smolSize - 1, smolSize - 1);
 	}
-
-
-	public void drawNextMinos(Graphics g) {	
-		for (int i = 0; i < nextMinos.size(); i++) {
-			Tetromino mino = nextMinos.get(i);
-			for (int[] coords : mino.getPos()) {
-				int[][] pos = mino.getPos();
-				for (int[] coord : pos) {
-					drawNextBox(g, mino.getShape().getColor(), i, coord[0], coord[1]);
+	
+	public void changePos(int rShift, int cShift) {
+		for (int[] coord : position) {
+			coord[0] += rShift;
+			coord[1] += cShift;
+		}
+		COR[0] += rShift;
+		COR[1] += cShift;
+	}
+	
+	public void rotateCW() {
+		double[] initCOR = new double[COR.length];
+		int[][] initPos = new int[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				initPos[i][j] = position[i][j];
+			}
+		}
+		for (int i = 0; i < COR.length; i++) {
+			initCOR[i] = COR[i];
+		}
+		double[][] tempPos = new double[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				tempPos[i][j] = position[i][j] - COR[j];
+			}
+		}
+		Matrix tempMat = new Matrix(tempPos);
+		tempMat.rotCClws();
+		tempPos = tempMat.getMatrix();
+		double[][] almostPos = new double[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				almostPos[i][j] = tempPos[i][j] + COR[j];
+			}
+		}
+		int[][] intPos = new int[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				intPos[i][j] = (int) almostPos[i][j];
+			}
+		}
+		position = intPos;
+		ceilKick(array);
+		rotstate = ((rotstate + 1) % 4 + 4) % 4;
+		if (!CWSRS(array)) {
+			position = initPos;
+			COR = initCOR;
+			rotstate = ((rotstate - 1) % 4 + 4) % 4;
+		}
+	}
+	
+	public void rotateCCW() {
+		int[][] initPos = new int[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				initPos[i][j] = position[i][j];
+			}
+		}
+		double[][] tempPos = new double[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				tempPos[i][j] = position[i][j] - COR[j];
+			}
+		}
+		Matrix tempMat = new Matrix(tempPos);
+		tempMat.rotClws();
+		tempPos = tempMat.getMatrix();
+		double[][] almostPos = new double[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				almostPos[i][j] = tempPos[i][j] + COR[j];
+			}
+		}
+		int[][] intPos = new int[position.length][position[0].length];
+		for (int i = 0; i < position.length; i++) {
+			for (int j = 0; j < position[0].length; j++) {
+				intPos[i][j] = (int) almostPos[i][j];
+			}
+		}
+		position = intPos;
+		ceilKick(array);
+		rotstate = ((rotstate - 1) % 4 + 4) % 4;
+		if (!CCWSRS(array)) {
+			position = initPos;
+			rotstate = ((rotstate + 1) % 4 + 4) % 4;
+		}
+	}
+	
+	
+	public boolean atBottom() {
+		boolean atBot = false;
+		for (int[] coord : position) {
+			if (coord[0] == Grid.ROWS - 1) {
+				atBot = true;
+			}
+		}
+		return atBot;
+	}
+	
+	public static boolean atBottom(int[][] coords) {
+		boolean atBot = false;
+		for (int[] coord : coords) {
+			if (coord[0] == Grid.ROWS - 1) {
+				atBot = true;
+			}
+		}
+		return atBot;
+	}
+	
+	public boolean collidesLeft(TetrisArray array) {
+		boolean collides = false;
+		for (int[] coord : position) {
+			for (Point p : Point.getSetMinoList()) {
+				int row = coord[0];
+				int col = coord[1];
+				if (col >= 0 && array.getPoint(row, col - 1) == p) {
+					collides = true;
 				}
 			}
 		}
+		return collides;
 	}
-
-	public void drawGhostPiece(Graphics g) {
-		g.setColor(Color.LIGHT_GRAY);
-
-		int[][] pos = new int[4][2];
-		for (int i = 0; i < pos.length; i++) {
-			for (int j = 0; j < pos[0].length; j++) {
-				pos[i][j] = currentMino.getPos()[i][j];
+	
+	public boolean collidesRight(TetrisArray array) {
+		boolean collides = false;
+		for (int[] coord : position) {
+			for (Point p : Point.getSetMinoList()) {
+				int row = coord[0];
+				int col = coord[1];
+				if (col < Grid.COLS && array.getPoint(row, col + 1) == p) {
+					collides = true;
+				}
 			}
 		}
-		while (!Tetromino.atBottom(pos) && !array.checkCollision(pos, TetrisArray.BELOW)) {
-			for (int[] coords : pos) {
-				coords[0]++;
+		return collides;
+	}
+	
+	public boolean collidesBot(TetrisArray array) {
+		boolean collides = false;
+		for (int[] coord : position) {
+			for (Point p : Point.getSetMinoList()) {
+				int row = coord[0];
+				int col = coord[1];
+				if (row < Grid.ROWS && array.getPoint(row - 1, col) == p) {
+					collides = true;
+				}
 			}
 		}
-
-		for (int[] coords : pos) {
-			g.drawRect((coords[1] * BOXSIZE) + GRIDXMARGIN, (coords[0] * BOXSIZE) + YMARGIN, BOXSIZE, BOXSIZE);
-			//drawBox(g, Color.LIGHT_GRAY, coords[0], coords[1]);
-		}
+		return collides;
 	}
-
-	public void drawCurrentMino(Graphics g) {
-		int[][] pos = currentMino.getPos();
-		for (int[] coord : pos) {
-			drawBox(g, currentMino.getShape().getColor(), coord[0], coord[1]);
-		}
-	}
-
-	public void drawFromArray(Graphics g) {
-		for (int r = 0; r < ROWS; r++) {
-			for (int c = 0; c < COLS; c++) {
-				Point p = array.getPoint(r, c);
-
-				if (p != Point.EMPTY && p != Point.CURRMINO) {
-					drawBox(g, p.getColor(), r, c);
-				}				
+	
+	public boolean CWSRS(TetrisArray array) {
+		if (rotstate == 0) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, -3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-2, 3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(3, -3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, 1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, -1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 1) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-1, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-3, 1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, -1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 2) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(2, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, -1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 3) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, -3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(1, 3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-3, -3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-3, -1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
 			}
 		}
+		
+		return false;
 	}
-
-	public void setCurrentMino(Tetromino mino) {
-		currentMino = mino;
-	}
-
-	public void addNextMino(Tetromino mino) {
-		nextMinos.add(mino);
-	}
-
-	public void newMino() {
-		Point setPoint = Point.SETMINOI;
-		for (Point p : Point.getSetMinoList()) {
-			if (p.getColor() == currentMino.getColor()) {
-				setPoint = p;
+	
+	public boolean CCWSRS(TetrisArray array) {
+		if (rotstate == 0) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(2, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-3, -1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 1) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, -3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(1, 3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-3, -3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, -1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 2) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, -3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-2, 3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(3, -3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-3, 1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, -1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 3) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-1, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, 1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, -1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
 			}
 		}
-		setCurrentMinoPoints(setPoint);
-		currentMino = nextMinos.remove(0);
-		addNextMino(new Tetromino(array));
-		currentMino.setInitialPos();
-		setCurrentMinoPoints(Point.CURRMINO);
-		repaint();
+		
+		return false;
 	}
-
-	public void keyPressed(KeyEvent e) {
-
-		int keyInt = e.getKeyCode();
-		boolean onLeftEdge = false;
-		boolean onRightEdge = false;
-		boolean atBottom = false;
-		boolean collideLeft = false;
-		boolean collideRight = false;
-
-		setCurrentMinoPoints(Point.EMPTY);
-
-		for (int[] coord : currentMino.getPos()) {
+	
+	public void ceilKick(TetrisArray array) {
+		int max = 0;
+		for (int[] coord : position) {
+			if (coord[0] < 0) {
+				max = -coord[0];
+			}
+		}
+		changePos(max, 0);
+	}
+	
+	public boolean collides(TetrisArray array) {
+		for (int[] coord : position) {
 			int row = coord[0];
 			int col = coord[1];
-			if (col == 0)
-				onLeftEdge = true;
-			else if (col == COLS - 1)
-				onRightEdge = true;
-			if (row == ROWS - 1)
-				atBottom = true;
-			if (!onLeftEdge && array.checkCollision(currentMino, TetrisArray.LEFT)) {
-				collideLeft = true;
+			if (row < 0 || row >= Grid.ROWS) {
+				return true;
 			}
-			if (!onRightEdge && array.checkCollision(currentMino, TetrisArray.RIGHT)) {
-				collideRight = true;
+			if (col < 0 || col >= Grid.COLS) {
+				return true;
+			}
+			if (array.getPoint(row, col) != Point.EMPTY && array.getPoint(row, col) != Point.CURRMINO) {
+				return true;
 			}
 		}
-
-		//L, R, SD, HD, rotCW, rotCCW
-
-		//left
-		if ((keyInt == keys[0] || keyInt == keys[0]) && !collideLeft && !onLeftEdge) {
-			currentMino.changePos(0, -1);
-		}
-
-
-		//right
-		else if (keyInt == keys[1] && !collideRight && !onRightEdge) {
-			currentMino.changePos(0, 1);
-			//System.out.println("move right");
-		}
-
-		//down
-		else if ((keyInt == keys[2]) && !array.checkCollision(currentMino, TetrisArray.BELOW) && !atBottom) {
-			currentMino.changePos(1, 0);
-			//System.out.println("move down");
-		}
-
-		//space
-		else if (keyInt == keys[3]) {
-			hardDrop();
-			newMino();
-			array.clearLines();
-			repaint();
-		}
-
-		//rotate cw
-		else if (keyInt == keys[4]) {
-			currentMino.rotateCW();
-			System.out.println("cw");
-		}
-
-		//rotate ccw
-		else if (keyInt == keys[5]) {
-			currentMino.rotateCCW();
-			System.out.println("ccw");
-		}
-
-		setCurrentMinoPoints(Point.CURRMINO);
-		repaint();
+		return false;
 	}
-
-	public void keyReleased(KeyEvent arg0) {
-	}
-
-	public void keyTyped(KeyEvent arg0) {
-	}
-
-	public void hardDrop() {
-		while (!currentMino.atBottom() && !array.checkCollision(currentMino, TetrisArray.BELOW)) {
-			currentMino.changePos(1, 0);
-		}
-	}
-
-	public void setCurrentMinoPoints(Point p) {
-		for (int[] coord : currentMino.getPos()) {
-			array.setPoint(coord[0], coord[1], p);
-		}
-	}
-
-	public void actionPerformed(ActionEvent arg0) {
-		boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
-		if (!currentMino.atBottom() && !collides) {
-			setCurrentMinoPoints(Point.EMPTY);
-
-			currentMino.changePos(1, 0);
-			setCurrentMinoPoints(Point.CURRMINO);
-		}
-
-
-		//		array.print();
-		//		System.out.println();
-
-
-		if (waitTick && (currentMino.atBottom() || collides)) {
-			newMino();
-		}
-		waitTick = false;
-		if (currentMino.atBottom() || collides) {
-			waitTick = true;
-		}
-
-		array.clearLines();
-		repaint();
-	}
-
-
+	
 	public static void print(int[][] array) {
 		for (int[] i : array) {
+			System.out.println(Arrays.toString(i));
+		}
+	}
+	public static void print(double[][] array) {
+		for (double[] i : array) {
 			System.out.println(Arrays.toString(i));
 		}
 	}
