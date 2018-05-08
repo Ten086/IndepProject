@@ -13,23 +13,25 @@ import javax.swing.*;
 
 public class Grid extends JPanel implements KeyListener, ActionListener {
 
-	private static int[] thombusKeys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_UP, KeyEvent.VK_CONTROL};
-	private static int[] heblenKeys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_X, KeyEvent.VK_Z};
+	private static int[] thombusKeys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_UP, KeyEvent.VK_CONTROL, KeyEvent.VK_SHIFT};
+	private static int[] heblenKeys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_X, KeyEvent.VK_Z, KeyEvent.VK_SHIFT};
 	private static int[] leftKeys = {KeyEvent.VK_G, KeyEvent.VK_J, KeyEvent.VK_H, KeyEvent.VK_SPACE, KeyEvent.VK_Z, KeyEvent.VK_X};
 	private static int[] rightKeys = {KeyEvent.VK_1, KeyEvent.VK_5, KeyEvent.VK_3, KeyEvent.VK_2, KeyEvent.VK_ALT, KeyEvent.VK_CONTROL};
-	//L, R, SD, HD, rotCW, rotCCW
+	//L, R, SD, HD, rotCW, rotCCW, hold
 
-	public static final int WIDTH = 500;
+	public static final int WIDTH = 550;
 	public static final int HEIGHT = 800;
 	public static final int BOXSIZE = 30;
+	public static final int BIGBOXSIZE = 3 * BOXSIZE;
+	public static final int SMOLBOXSIZE = 3 * (BOXSIZE / 5);
 	public static final int ROWS = 20;
 	public static final int COLS = 10;
 	public static final int XMARGIN = (WIDTH - (COLS * BOXSIZE)) / 2;
 	public static final int YMARGIN = (HEIGHT - (ROWS * BOXSIZE)) / 2;
-	public static final int GRIDXMARGIN = XMARGIN / 4;
-	public static final int NEXTGRIDXMARGIN = (2 * GRIDXMARGIN) + (BOXSIZE * COLS);
-	public static final int NEXTBOXBIGSIZE = 3 * BOXSIZE;
-	public static final int NEXTBOXSIZE = 3 * (BOXSIZE / 5);
+	public static final int GRIDXMARGIN = XMARGIN / 4 + BIGBOXSIZE;
+	public static final int NEXTGRIDXMARGIN = GRIDXMARGIN + (BOXSIZE * COLS) + 5;
+	public static final int NEXTGRIDYMARGIN = YMARGIN + (BOXSIZE * 2);
+	public static final int HOLDGRIDXMARGIN = GRIDXMARGIN - BIGBOXSIZE - 5;
 
 	public static final Color LIGHTBLUE = new Color(3, 243, 241);
 	public static final Color DARKBLUE = new Color (3, 0, 235);
@@ -44,10 +46,13 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private int[] keys = thombusKeys;
 	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
 	private Tetromino currentMino;
+	private Tetromino heldMino;
 	private TetrisArray array = new TetrisArray(this);
 	private Timer timer;
 
 	public int linesCleared = 0;
+	private boolean gotHeld = false;
+	private boolean drawX = false;
 	
 	boolean waitTick;
 
@@ -90,7 +95,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		//twoPlayerSetup(new Grid(), new Grid());
 	}
 
-
 	public void setUpTimer() {
 		timer = new Timer(1000, this);
 		timer.setInitialDelay(10);
@@ -104,18 +108,18 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
+		//background:
 		//northern lights: 50, i, 100
 		//fire: 255, i, 100
 		//earth: 50, 90, i
-
-		/*for (int i = 0; i < 255; i++) {
-			g.setColor(new Color(50, 90, i));
+		for (int i = 0; i < 255; i++) {
+			g.setColor(new Color(50, i, 100));
 			g.fillRect(0, i * 3, WIDTH, 3);	
 		}
-		g.fillRect(0, 255 * 3, WIDTH, 50);*/
-		
+		g.fillRect(0, 255 * 3, WIDTH, 50);
+
 		//rainbow
-		g.setColor(new Color(226, 56, 56));
+		/*g.setColor(new Color(226, 56, 56));
 		g.fillRect(0, 0, WIDTH, HEIGHT / 6);
 		g.setColor(new Color(251, 128, 35));
 		g.fillRect(0, (HEIGHT / 6), WIDTH, HEIGHT / 6);
@@ -126,34 +130,34 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		g.setColor(new Color(3, 156, 223));
 		g.fillRect(0, (HEIGHT / 6) * 4, WIDTH, HEIGHT / 6);
 		g.setColor(new Color(151, 61, 149));
-		g.fillRect(0, (HEIGHT / 6) * 5, WIDTH, HEIGHT / 6);
-		 
-		
-		g.setFont(new Font("Dialog", Font.BOLD, 16));
-		g.drawString("NEXT", 3 * (WIDTH / 4), 3 * (YMARGIN / 4));
+		g.fillRect(0, (HEIGHT / 6) * 5, WIDTH, HEIGHT / 6);*/
 
-//		// /* lol just trolling you can delete this	
-//		g.setColor(Color.RED);
-//		g.fillRect(WIDTH / 6, YMARGIN / 4, 50, 50);
-//		g.setColor(Color.WHITE);
-//		g.setFont(new Font("Dialog", Font.BOLD, 50));
-//		g.drawString("B", WIDTH / 6 + 8, YMARGIN / 2 + 20);
-//		g.setFont(new Font("Dialog", Font.BOLD, 50));
-//		g.drawString("etris", WIDTH / 3 - 30, YMARGIN / 2 + 20);
-//		// */
+		/* lol just trolling you can delete this	
+		g.setColor(Color.RED);
+		g.fillRect(WIDTH / 6, YMARGIN / 4, 50, 50);
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Dialog", Font.BOLD, 50));
+		g.drawString("B", WIDTH / 6 + 8, YMARGIN / 2 + 20);
+		g.setFont(new Font("Dialog", Font.BOLD, 50));
+		g.drawString("etris", WIDTH / 3 - 30, YMARGIN / 2 + 20);
+		 */
 
+		drawStrings(g);
 		drawGrid(g);
 		drawNextGrid(g);
 		drawNextMinos(g);
+		drawHoldGrid(g);
+		drawHoldMino(g);
+		if (drawX) {
+			drawX(g);
+		}
+
 		if (!currentMino.atBottom()) {
 			drawGhostPiece(g);
 		}
 		drawCurrentMino(g);
 		drawFromArray(g);
-		g.setColor(Color.RED);
-		g.setFont(new Font("Dialog", Font.BOLD, 20));
-		g.drawString("Lines Cleared", 3 * WIDTH / 4 - 25, 3 * HEIGHT / 4);
-		g.drawString(new Integer(linesCleared).toString(), 3 * WIDTH / 4 + 25, 3 * HEIGHT / 4 + 25);
+
 		if (dead) {
 			g.setColor(new Color(151, 0, 149));
 			g.setFont(new Font("Dialog", Font.BOLD, 24));
@@ -163,6 +167,21 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		}
 	}
 
+	public void drawStrings(Graphics g) {
+		g.setFont(new Font("Dialog", Font.BOLD, 40));
+		g.drawString("Tetris", (WIDTH / 3) + 30, YMARGIN - 10);
+
+		g.setFont(new Font("Dialog", Font.BOLD, 20));
+		g.drawString("NEXT", 3 * (WIDTH / 4) + 50, 3 * (YMARGIN / 2));
+		g.drawString("HOLD", (WIDTH / 8) - 40, 3 * (YMARGIN / 2));
+		g.drawString("LINES", 30, HEIGHT / 2);
+		g.drawString("CLEARED", 10, HEIGHT / 2 + 20);
+
+		g.setFont(new Font("Dialog", Font.BOLD, 40));
+		g.drawString(new Integer(linesCleared).toString(), 40, HEIGHT / 2 + 60);
+	}
+	
+	
 	public void drawGrid(Graphics g) {	
 		for (int c = 0; c < COLS; c++) {
 			for (int r = 0; r < ROWS; r++) {
@@ -174,51 +193,67 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void drawNextGrid(Graphics g) {
-		int size = NEXTBOXBIGSIZE;
+		int size = BIGBOXSIZE;
 		for (int r = 0; r < 5; r++) {
 			g.setColor(Color.DARK_GRAY);
-			g.fillRect(NEXTGRIDXMARGIN, (r * size) + YMARGIN, size, size);
+			g.fillRect(NEXTGRIDXMARGIN, (r * size) + NEXTGRIDYMARGIN, size, size);
 			g.setColor(Color.BLACK);
-			g.drawRect(NEXTGRIDXMARGIN, (r * size) + YMARGIN, size, size);
+			g.drawRect(NEXTGRIDXMARGIN, (r * size) + NEXTGRIDYMARGIN, size, size);
 		}
 	}
 
-	public void drawBox(Graphics g, Color c, int row, int col) {
-		int xPos = GRIDXMARGIN + (col * BOXSIZE);
-		int yPos = YMARGIN + (row * BOXSIZE);
-//		actual code:
-		g.setColor(c);
-		g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
-		 
-		 
-//		// /* lol just trolling you can delete this
-//		g.setColor(Color.RED);
-//		g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
-//		g.setColor(Color.WHITE);
-//		g.setFont(new Font("Dialog", Font.BOLD, 20));
-//		g.drawString("B", xPos + BOXSIZE / 3, yPos + BOXSIZE - BOXSIZE / 3);
-//		// */
+	public void drawHoldGrid(Graphics g) {
+		int size = BIGBOXSIZE;
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(HOLDGRIDXMARGIN, NEXTGRIDYMARGIN, size, size);
+		g.setColor(Color.BLACK);
+		g.drawRect(HOLDGRIDXMARGIN, NEXTGRIDYMARGIN, size, size);
 	}
 
-	public void drawNextBox(Graphics g, Color c, int index, int row, int col) {
-		int smolSize = NEXTBOXSIZE;
-		int xPos = NEXTGRIDXMARGIN + (col * smolSize) + smolSize;
-		int xShift = 0;
-		int yPos = YMARGIN + (row * smolSize) + (BOXSIZE * 3 * index) + smolSize;
-		int yShift = 0;
+	public void drawHoldBox(Graphics g, Color c, int row, int col) {
+		int smolSize = SMOLBOXSIZE;
+		int xPos = HOLDGRIDXMARGIN + (col * smolSize) + smolSize;
+		int yPos = NEXTGRIDYMARGIN + (row * smolSize) + smolSize;
+		g.setColor(c);
+		g.fillRect(xPos + 1 + getXShift(c), yPos + 1 + getYShift(c), smolSize - 1, smolSize - 1);
+	}
+
+	public void drawHoldMino(Graphics g) {
+		if (heldMino != null) {
+			for (int[] coords : heldMino.getInitialPosCopy()) {
+				drawHoldBox(g, heldMino.getShape().getColor(), coords[0], coords[1]);	
+			}
+		}
+	}
+
+	public void drawX(Graphics g) {
+		g.setColor(Color.RED);
+		g.setFont(new Font("Dialog", Font.BOLD, 30));
+		g.drawString("X", HOLDGRIDXMARGIN + BIGBOXSIZE - 30, NEXTGRIDYMARGIN + BIGBOXSIZE - 5);
+		drawX = false;
+	}
+	
+	public static int getXShift(Color c) {
+		int smolSize = SMOLBOXSIZE;
+		int xShift = 0;	
 		Color iColor = TetrominoShape.I.getColor();
 		Color oColor = TetrominoShape.O.getColor();
-		Color lColor = TetrominoShape.L.getColor();
-		Color jColor = TetrominoShape.J.getColor();
-		g.setColor(c);
-
+		
 		if (c.equals(iColor)) {
 			xShift = -1 * (smolSize / 2);
 		}
 		else if (c.equals(oColor)) {
 			xShift = smolSize / 2;
 		}
-
+		
+		return xShift;
+	}
+	
+	public static int getYShift(Color c) {
+		int smolSize = SMOLBOXSIZE;
+		int yShift = 0;		
+		Color iColor = TetrominoShape.I.getColor();
+		
 		if (!c.equals(iColor)) {
 			yShift = smolSize / 2;
 		}
@@ -226,18 +261,43 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			yShift = smolSize;
 		}
 
-		g.fillRect(xPos + 1 + xShift, yPos + 1 + yShift, smolSize - 1, smolSize - 1);
+		return yShift;
 	}
 
+	public void drawBox(Graphics g, Color c, int row, int col) {
+		int xPos = GRIDXMARGIN + (col * BOXSIZE);
+		int yPos = YMARGIN + (row * BOXSIZE);
+		//		actual code:
+		g.setColor(c);
+		g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
+
+
+		//		// /* lol just trolling you can delete this
+		//		g.setColor(Color.RED);
+		//		g.fillRect(xPos + 1, yPos + 1, BOXSIZE - 1, BOXSIZE - 1);
+		//		g.setColor(Color.WHITE);
+		//		g.setFont(new Font("Dialog", Font.BOLD, 20));
+		//		g.drawString("B", xPos + BOXSIZE / 3, yPos + BOXSIZE - BOXSIZE / 3);
+		//		// */
+	}
+
+	public void drawNextBox(Graphics g, Color c, int index, int row, int col) {
+		int smolSize = SMOLBOXSIZE;
+		int xPos = NEXTGRIDXMARGIN + (col * smolSize) + smolSize;
+		int xShift = 0;
+		int yPos = NEXTGRIDYMARGIN + (row * smolSize) + (BOXSIZE * 3 * index) + smolSize;
+		int yShift = 0;
+		
+		g.setColor(c);
+
+		g.fillRect(xPos + 1 + getXShift(c), yPos + 1 + getYShift(c), smolSize - 1, smolSize - 1);
+	}
 
 	public void drawNextMinos(Graphics g) {	
 		for (int i = 0; i < nextMinos.size(); i++) {
 			Tetromino mino = nextMinos.get(i);
-			for (int[] coords : mino.getPos()) {
-				int[][] pos = mino.getPos();
-				for (int[] coord : pos) {
-					drawNextBox(g, mino.getShape().getColor(), i, coord[0], coord[1]);
-				}
+			for (int[] coords : mino.getInitialPosCopy()) {
+				drawNextBox(g, mino.getShape().getColor(), i, coords[0], coords[1]);
 			}
 		}
 	}
@@ -290,7 +350,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		nextMinos.add(mino);
 	}
 
-	public void newMino() {
+	public void putDownCurrentMino() {
 		Point setPoint = Point.SETMINOI;
 		for (Point p : Point.getSetMinoList()) {
 			if (p.getColor() == currentMino.getColor()) {
@@ -298,6 +358,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 		setCurrentMinoPoints(setPoint);
+	}
+	
+	public void newMino() {
 		currentMino = nextMinos.remove(0);
 		addNextMino(new Tetromino(array));
 		currentMino.setInitialPos();
@@ -318,9 +381,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			boolean atBottom = false;
 			boolean collideLeft = false;
 			boolean collideRight = false;
-	
+
 			setCurrentMinoPoints(Point.EMPTY);
-	
+
 			for (int[] coord : currentMino.getPos()) {
 				int row = coord[0];
 				int col = coord[1];
@@ -337,52 +400,74 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 					collideRight = true;
 				}
 			}
-	
+
 			//L, R, SD, HD, rotCW, rotCCW
-	
+
 			//left
-			if ((keyInt == keys[0] || keyInt == keys[0]) && !collideLeft && !onLeftEdge) {
+			if (keyInt == keys[0] && !collideLeft && !onLeftEdge) {
 				currentMino.changePos(0, -1);
 			}	
-	
-	
+
+
 			//right
 			else if (keyInt == keys[1] && !collideRight && !onRightEdge) {
 				currentMino.changePos(0, 1);
 				//System.out.println("move right");
 			}
-	
+
 			//down
-			else if ((keyInt == keys[2]) && !array.checkCollision(currentMino, TetrisArray.BELOW) && !atBottom) {
+			else if (keyInt == keys[2] && !array.checkCollision(currentMino, TetrisArray.BELOW) && !atBottom) {
 				currentMino.changePos(1, 0);
 				//System.out.println("move down");
 			}
-	
+
 			//space
 			else if (keyInt == keys[3]) {
 				hardDrop();
+				putDownCurrentMino();
 				newMino();
+				gotHeld = false;
 				array.clearLines();
 				repaint();
 			}
-	
+
 			//rotate cw
 			else if (keyInt == keys[4]) {
 				currentMino.rotateCW();
 				System.out.println("cw");
 			}
-	
+
 			//rotate ccw
 			else if (keyInt == keys[5]) {
 				currentMino.rotateCCW();
 				System.out.println("ccw");
 			}
-	
+
+			//hold
+			else if (keyInt == keys[6]) {
+				if (!gotHeld) {
+					gotHeld = true;
+					Tetromino temp;
+					if (heldMino == null) {
+						heldMino = currentMino;
+						newMino();
+					}
+					else {
+						temp = new Tetromino(currentMino.getShape(), array);
+						currentMino = new Tetromino(heldMino.getShape(), array);
+						heldMino = temp;
+						currentMino.setInitialPos();
+					}	
+				}
+				else {
+					drawX = true;
+				}
+			}
 			setCurrentMinoPoints(Point.CURRMINO);
 			repaint();
 		}
 	}
-	
+
 	public void keyReleased(KeyEvent arg0) {
 	}
 
@@ -406,24 +491,26 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
 			if (!currentMino.atBottom() && !collides) {
 				setCurrentMinoPoints(Point.EMPTY);
-	
+
 				currentMino.changePos(1, 0);
 				setCurrentMinoPoints(Point.CURRMINO);
 			}
-	
-	
+
+
 			//		array.print();
 			//		System.out.println();
-	
-	
+
+
 			if (waitTick && (currentMino.atBottom() || collides)) {
+				putDownCurrentMino();
 				newMino();
+				gotHeld = false;
 			}
 			waitTick = false;
 			if (currentMino.atBottom() || collides) {
 				waitTick = true;
 			}
-	
+
 			array.clearLines();
 			repaint();
 		} else {
@@ -434,7 +521,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void incrementLinesCleared() {
 		linesCleared++;
 	}
-	
+
 	public static void print(int[][] array) {
 		for (int[] i : array) {
 			System.out.println(Arrays.toString(i));
