@@ -7,7 +7,7 @@ public enum TetrominoShape {
 	O (new Color(237, 242, 6), "O", new int[][] {{0,0},{0,1},{1,0},{1,1}}, new double[] {0.5, 0.5}),
 	S (new Color (5, 239, 7), "S", new int[][] {{1,0},{1,1},{0,1},{0,2}}, new double[] {1.0, 1.0}),
 	T (new Color(164, 4, 229), "T", new int[][] {{1,0},{1,1},{1,2},{0,1}}, new double[] {1.0, 1.0}),
-	Z (new Color(234, 4, 4), "Z", new int[][] {{0,0},{0,1},{1,1},{1,2}}, new double[] {0.0, 1.0});
+	Z (new Color(234, 4, 4), "Z", new int[][] {{0,0},{0,1},{1,1},{1,2}}, new double[] {1.0, 1.0});
 	
 	private Color color;
 	private String name;
