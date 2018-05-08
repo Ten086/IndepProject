@@ -152,6 +152,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			g.setColor(new Color(151, 0, 149));
 			g.setFont(new Font("Dialog", Font.BOLD, 24));
 			g.drawString("u ded", WIDTH / 3 - XMARGIN / 5, 3 * YMARGIN / 4);
+			g.setFont(new Font("Dialog", Font.BOLD, 6));
+			g.drawString("no u", WIDTH / 3, 5 * YMARGIN / 6);
 		}
 	}
 
