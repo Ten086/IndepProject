@@ -44,9 +44,11 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private int[] keys = thombusKeys;
 	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
 	private Tetromino currentMino;
-	private TetrisArray array = new TetrisArray();
+	private TetrisArray array = new TetrisArray(this);
 	private Timer timer;
 
+	public int linesCleared = 0;
+	
 	boolean waitTick;
 
 	public Grid() {
@@ -148,12 +150,16 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		}
 		drawCurrentMino(g);
 		drawFromArray(g);
+		g.setColor(Color.RED);
+		g.setFont(new Font("Dialog", Font.BOLD, 20));
+		g.drawString("Lines Cleared", 3 * WIDTH / 4 - 25, 3 * HEIGHT / 4);
+		g.drawString(new Integer(linesCleared).toString(), 3 * WIDTH / 4 + 25, 3 * HEIGHT / 4 + 25);
 		if (dead) {
 			g.setColor(new Color(151, 0, 149));
 			g.setFont(new Font("Dialog", Font.BOLD, 24));
 			g.drawString("u ded", WIDTH / 3 - XMARGIN / 5, 3 * YMARGIN / 4);
 			g.setFont(new Font("Dialog", Font.BOLD, 6));
-			g.drawString("no u", WIDTH / 3, 5 * YMARGIN / 6);
+			g.drawString("no u", WIDTH / 3 + 6, 5 * YMARGIN / 6);
 		}
 	}
 
