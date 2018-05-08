@@ -244,6 +244,7 @@ public class Tetromino {
 	}
 	
 	public boolean CWSRS(TetrisArray array) {
+		System.out.println("SRS");
 		if (rotstate == 0) {
 			if (shape == TetrominoShape.I) {
 				if (!collides(array)) {
@@ -257,63 +258,11 @@ public class Tetromino {
 						if (!collides(array)) {
 							return true;
 						} else {
-							changePos(-2, 3);
+							changePos(2, 3);
 							if (!collides(array)) {
 								return true;
 							} else {
-								changePos(3, -3);
-								if (!collides(array)) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-				return false;
-			} else if (shape != TetrominoShape.O) {
-				if (!collides(array)) {
-					return true;
-				} else {
-					changePos(0, -1);
-					if (!collides(array)) {
-						return true;
-					} else {
-						changePos(-1, 0);
-						if (!collides(array)) {
-							return true;
-						} else {
-							changePos(3, 1);
-							if (!collides(array)) {
-								return true;
-							} else {
-								changePos(0, -1);
-								if (!collides(array)) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-				return false;
-			}
-		} else if (rotstate == 1) {
-			if (shape == TetrominoShape.I) {
-				if (!collides(array)) {
-					return true;
-				} else {
-					changePos(0, -2);
-					if (!collides(array)) {
-						return true;
-					} else {
-						changePos(0, 3);
-						if (!collides(array)) {
-							return true;
-						} else {
-							changePos(-1, -3);
-							if (!collides(array)) {
-								return true;
-							} else {
-								changePos(3, 3);
+								changePos(-3, -3);
 								if (!collides(array)) {
 									return true;
 								}
@@ -348,12 +297,12 @@ public class Tetromino {
 				}
 				return false;
 			}
-		} else if (rotstate == 2) {
+		} else if (rotstate == 1) {
 			if (shape == TetrominoShape.I) {
 				if (!collides(array)) {
 					return true;
 				} else {
-					changePos(0, -1);
+					changePos(0, -2);
 					if (!collides(array)) {
 						return true;
 					} else {
@@ -361,7 +310,7 @@ public class Tetromino {
 						if (!collides(array)) {
 							return true;
 						} else {
-							changePos(2, -3);
+							changePos(1, -3);
 							if (!collides(array)) {
 								return true;
 							} else {
@@ -378,7 +327,7 @@ public class Tetromino {
 				if (!collides(array)) {
 					return true;
 				} else {
-					changePos(0, 1);
+					changePos(0, -1);
 					if (!collides(array)) {
 						return true;
 					} else {
@@ -386,7 +335,59 @@ public class Tetromino {
 						if (!collides(array)) {
 							return true;
 						} else {
-							changePos(3, -1);
+							changePos(3, 1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, -1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 2) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-2, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-3, -1);
 							if (!collides(array)) {
 								return true;
 							} else {
@@ -413,11 +414,11 @@ public class Tetromino {
 						if (!collides(array)) {
 							return true;
 						} else {
-							changePos(1, 3);
+							changePos(-1, 3);
 							if (!collides(array)) {
 								return true;
 							} else {
-								changePos(-3, -3);
+								changePos(3, -3);
 								if (!collides(array)) {
 									return true;
 								}
@@ -434,11 +435,11 @@ public class Tetromino {
 					if (!collides(array)) {
 						return true;
 					} else {
-						changePos(1, 0);
+						changePos(-1, 0);
 						if (!collides(array)) {
 							return true;
 						} else {
-							changePos(-3, -1);
+							changePos(3, -1);
 							if (!collides(array)) {
 								return true;
 							} else {
@@ -458,7 +459,7 @@ public class Tetromino {
 	}
 	
 	public boolean CCWSRS(TetrisArray array) {
-		if (rotstate == 0) {
+		if (rotstate == 3) {
 			if (shape == TetrominoShape.I) {
 				if (!collides(array)) {
 					return true;
@@ -471,11 +472,63 @@ public class Tetromino {
 						if (!collides(array)) {
 							return true;
 						} else {
-							changePos(2, -3);
+							changePos(-2, -3);
 							if (!collides(array)) {
 								return true;
 							} else {
-								changePos(-3, 3);
+								changePos(3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(-1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(3, -1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, 1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 0) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, 2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, -3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-1, 3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(3, -3);
 								if (!collides(array)) {
 									return true;
 								}
@@ -515,7 +568,7 @@ public class Tetromino {
 				if (!collides(array)) {
 					return true;
 				} else {
-					changePos(0, 2);
+					changePos(0, 1);
 					if (!collides(array)) {
 						return true;
 					} else {
@@ -523,115 +576,11 @@ public class Tetromino {
 						if (!collides(array)) {
 							return true;
 						} else {
-							changePos(1, 3);
+							changePos(2, 3);
 							if (!collides(array)) {
 								return true;
 							} else {
 								changePos(-3, -3);
-								if (!collides(array)) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-				return false;
-			} else if (shape != TetrominoShape.O) {
-				if (!collides(array)) {
-					return true;
-				} else {
-					changePos(0, 1);
-					if (!collides(array)) {
-						return true;
-					} else {
-						changePos(-1, 0);
-						if (!collides(array)) {
-							return true;
-						} else {
-							changePos(3, -1);
-							if (!collides(array)) {
-								return true;
-							} else {
-								changePos(0, 1);
-								if (!collides(array)) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-				return false;
-			}
-		} else if (rotstate == 2) {
-			if (shape == TetrominoShape.I) {
-				if (!collides(array)) {
-					return true;
-				} else {
-					changePos(0, 1);
-					if (!collides(array)) {
-						return true;
-					} else {
-						changePos(0, -3);
-						if (!collides(array)) {
-							return true;
-						} else {
-							changePos(-2, 3);
-							if (!collides(array)) {
-								return true;
-							} else {
-								changePos(3, -3);
-								if (!collides(array)) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-				return false;
-			} else if (shape != TetrominoShape.O) {
-				if (!collides(array)) {
-					return true;
-				} else {
-					changePos(0, -1);
-					if (!collides(array)) {
-						return true;
-					} else {
-						changePos(1, 0);
-						if (!collides(array)) {
-							return true;
-						} else {
-							changePos(-3, 1);
-							if (!collides(array)) {
-								return true;
-							} else {
-								changePos(0, -1);
-								if (!collides(array)) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-				return false;
-			}
-		} else if (rotstate == 3) {
-			if (shape == TetrominoShape.I) {
-				if (!collides(array)) {
-					return true;
-				} else {
-					changePos(0, -2);
-					if (!collides(array)) {
-						return true;
-					} else {
-						changePos(0, 3);
-						if (!collides(array)) {
-							return true;
-						} else {
-							changePos(-1, -3);
-							if (!collides(array)) {
-								return true;
-							} else {
-								changePos(3, 3);
 								if (!collides(array)) {
 									return true;
 								}
@@ -653,6 +602,58 @@ public class Tetromino {
 							return true;
 						} else {
 							changePos(3, 1);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(0, -1);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		} else if (rotstate == 2) {
+			if (shape == TetrominoShape.I) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -2);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(0, 3);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(1, -3);
+							if (!collides(array)) {
+								return true;
+							} else {
+								changePos(-3, 3);
+								if (!collides(array)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			} else if (shape != TetrominoShape.O) {
+				if (!collides(array)) {
+					return true;
+				} else {
+					changePos(0, -1);
+					if (!collides(array)) {
+						return true;
+					} else {
+						changePos(1, 0);
+						if (!collides(array)) {
+							return true;
+						} else {
+							changePos(-3, 1);
 							if (!collides(array)) {
 								return true;
 							} else {
