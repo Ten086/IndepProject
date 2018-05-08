@@ -2,12 +2,14 @@ import java.util.ArrayList;
 
 public class TetrisArray {
 	private Point[][] array = new Point[Grid.ROWS][Grid.COLS];
+	private Grid grid;
 
 	public static final int BELOW = 0;
 	public static final int LEFT = 1;
 	public static final int RIGHT = 2;
 
-	public TetrisArray() {
+	public TetrisArray(Grid grdi) {
+		grid = grdi;
 		setAllEmpty();
 	}
 
@@ -106,6 +108,7 @@ public class TetrisArray {
 		for (Point[] row : array) {
 			if (lineFilled(row)) {
 				filledLines.add(row);
+				grid.incrementLinesCleared();
 				System.out.println("added filled line");
 			}
 		}
