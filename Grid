@@ -431,7 +431,10 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		}
 	}
 
-
+	public void incrementLinesCleared() {
+		linesCleared++;
+	}
+	
 	public static void print(int[][] array) {
 		for (int[] i : array) {
 			System.out.println(Arrays.toString(i));
