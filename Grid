@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -161,9 +162,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		if (dead) {
 			g.setColor(new Color(151, 0, 149));
 			g.setFont(new Font("Dialog", Font.BOLD, 24));
-			g.drawString("u ded", WIDTH / 3 - XMARGIN / 5, 3 * YMARGIN / 4);
+			g.drawString("u ded", WIDTH / 3 - XMARGIN / 2, 3 * YMARGIN / 4);
 			g.setFont(new Font("Dialog", Font.BOLD, 6));
-			g.drawString("no u", WIDTH / 3 + 6, 5 * YMARGIN / 6);
+			g.drawString("no u", WIDTH / 3 - XMARGIN / 5 - 8, 5 * YMARGIN / 6);
 		}
 	}
 
@@ -172,13 +173,15 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		g.drawString("Tetris", (WIDTH / 3) + 30, YMARGIN - 10);
 
 		g.setFont(new Font("Dialog", Font.BOLD, 20));
-		g.drawString("NEXT", 3 * (WIDTH / 4) + 50, 3 * (YMARGIN / 2));
-		g.drawString("HOLD", (WIDTH / 8) - 40, 3 * (YMARGIN / 2));
-		g.drawString("LINES", 30, HEIGHT / 2);
-		g.drawString("CLEARED", 10, HEIGHT / 2 + 20);
+		FontMetrics metric = g.getFontMetrics();
+		g.drawString("NEXT", NEXTGRIDXMARGIN + 10 + BIGBOXSIZE / 2 - metric.stringWidth("NEXT") / 2, 3 * (YMARGIN / 2));
+		g.drawString("HOLD", HOLDGRIDXMARGIN - 10 + BIGBOXSIZE / 2 - metric.stringWidth("HOLD") / 2, 3 * (YMARGIN / 2));
+		g.drawString("LINES", HOLDGRIDXMARGIN - 10 + BIGBOXSIZE / 2 - metric.stringWidth("LINES") / 2, HEIGHT / 2);
+		g.drawString("CLEARED", HOLDGRIDXMARGIN - 10 + BIGBOXSIZE / 2 - metric.stringWidth("CLEARED") / 2, HEIGHT / 2 + 20);
 
 		g.setFont(new Font("Dialog", Font.BOLD, 40));
-		g.drawString(new Integer(linesCleared).toString(), 40, HEIGHT / 2 + 60);
+		FontMetrics metric2 = g.getFontMetrics();
+		g.drawString(new Integer(linesCleared).toString(), HOLDGRIDXMARGIN - 10 + BIGBOXSIZE / 2 - metric2.stringWidth(new Integer(linesCleared).toString()) / 2, HEIGHT / 2 + 60);
 	}
 	
 	
@@ -196,23 +199,23 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		int size = BIGBOXSIZE;
 		for (int r = 0; r < 5; r++) {
 			g.setColor(Color.DARK_GRAY);
-			g.fillRect(NEXTGRIDXMARGIN, (r * size) + NEXTGRIDYMARGIN, size, size);
+			g.fillRect(NEXTGRIDXMARGIN + 10, (r * size) + NEXTGRIDYMARGIN, size, size);
 			g.setColor(Color.BLACK);
-			g.drawRect(NEXTGRIDXMARGIN, (r * size) + NEXTGRIDYMARGIN, size, size);
+			g.drawRect(NEXTGRIDXMARGIN + 10, (r * size) + NEXTGRIDYMARGIN, size, size);
 		}
 	}
 
 	public void drawHoldGrid(Graphics g) {
 		int size = BIGBOXSIZE;
 		g.setColor(Color.DARK_GRAY);
-		g.fillRect(HOLDGRIDXMARGIN, NEXTGRIDYMARGIN, size, size);
+		g.fillRect(HOLDGRIDXMARGIN - 10, NEXTGRIDYMARGIN, size, size);
 		g.setColor(Color.BLACK);
-		g.drawRect(HOLDGRIDXMARGIN, NEXTGRIDYMARGIN, size, size);
+		g.drawRect(HOLDGRIDXMARGIN - 10, NEXTGRIDYMARGIN, size, size);
 	}
 
 	public void drawHoldBox(Graphics g, Color c, int row, int col) {
 		int smolSize = SMOLBOXSIZE;
-		int xPos = HOLDGRIDXMARGIN + (col * smolSize) + smolSize;
+		int xPos = HOLDGRIDXMARGIN - 10 + (col * smolSize) + smolSize;
 		int yPos = NEXTGRIDYMARGIN + (row * smolSize) + smolSize;
 		g.setColor(c);
 		g.fillRect(xPos + 1 + getXShift(c), yPos + 1 + getYShift(c), smolSize - 1, smolSize - 1);
@@ -283,7 +286,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public void drawNextBox(Graphics g, Color c, int index, int row, int col) {
 		int smolSize = SMOLBOXSIZE;
-		int xPos = NEXTGRIDXMARGIN + (col * smolSize) + smolSize;
+		int xPos = NEXTGRIDXMARGIN + 10 + (col * smolSize) + smolSize;
 		int xShift = 0;
 		int yPos = NEXTGRIDYMARGIN + (row * smolSize) + (BOXSIZE * 3 * index) + smolSize;
 		int yShift = 0;
