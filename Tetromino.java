@@ -38,6 +38,7 @@ public class Tetromino {
 	public Color getColor() {
 		return color;
 	}
+	
 	public void printPos() {
 		for (int[] coords : position) {
 			System.out.print("row " + coords[0] + ", col " + coords[1] + " | ");
@@ -54,12 +55,15 @@ public class Tetromino {
 		}
 		return copy;
 	}
+	
 	public int[][] getPos() {
 		return position;
 	}
+	
 	public double[] getCOR() {
 		return COR;
 	}
+	
 	public Point getSetMino() {
 		Point setMino = null;
 		for (Point p : Point.getSetMinoList()) {
@@ -180,7 +184,6 @@ public class Tetromino {
 		}
 	}
 	
-	
 	public boolean atBottom() {
 		boolean atBot = false;
 		for (int[] coord : position) {
@@ -244,7 +247,6 @@ public class Tetromino {
 	}
 	
 	public boolean CWSRS(TetrisArray array) {
-		System.out.println("SRS");
 		if (rotstate == 0) {
 			if (shape == TetrominoShape.I) {
 				if (!collides(array)) {
