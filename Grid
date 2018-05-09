@@ -66,6 +66,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private String write = "";
 
 	boolean waitTick;
+	
+	private Grid opponent;
 
 	public Grid() {
 		for (int i = 0; i < 6; i++) {
@@ -116,6 +118,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		keys = keyList;
 	}
 
+	public void setOpponent(Grid opp) {
+		opponent = opp;
+	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
@@ -124,7 +129,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		//fire: 255, i, 100
 		//earth: 50, 90, i
 		for (int i = 0; i < 255; i++) {
-			g.setColor(new Color(50, i, 100));
+			g.setColor(new Color(255, i, 100));
 			g.fillRect(0, i * 3, WIDTH, 3);	
 		}
 		g.fillRect(0, 255 * 3, WIDTH, 50);
@@ -337,6 +342,31 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		return yShift;
 	}
 
+	public void drawTrash(Graphics g, int row, int col) {
+		for (int c = 0; c < COLS; c++) {
+			drawBox(g, Color.LIGHT_GRAY, row, c);
+		}
+	}
+	
+	public void drawBomb(Graphics g, int row, int col) {
+		int xPos = GRIDXMARGIN + (col * BOXSIZE) - 1;
+		int yPos = YMARGIN + (row * BOXSIZE) - 1;
+		int arcXPos = GRIDXMARGIN + (col * BOXSIZE) + 5;
+		int arcYPos = YMARGIN + (row * BOXSIZE) + 5;
+		int arcSize = BOXSIZE - 10;
+		 
+		drawBox(g, Color.BLACK, row, col);
+		g.setColor(Color.RED);
+		g.fillArc(arcXPos, arcYPos, arcSize, arcSize, 0, 60);
+		g.fillArc(arcXPos, arcYPos, arcSize, arcSize, 120, 60);
+		g.fillArc(arcXPos, arcYPos, arcSize, arcSize, 240, 60);
+		g.setColor(Color.BLACK);
+		g.fillOval(xPos + BOXSIZE / 2 - 4, yPos + BOXSIZE / 2 - 4, 10, 10);
+		g.setColor(Color.RED);
+		g.fillOval(xPos + BOXSIZE / 2, yPos + BOXSIZE / 2, 3, 3);
+		
+	}
+	
 	public void drawBox(Graphics g, Color c, int row, int col) {
 		int xPos = GRIDXMARGIN + (col * BOXSIZE);
 		int yPos = YMARGIN + (row * BOXSIZE);
@@ -408,7 +438,13 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			for (int c = 0; c < COLS; c++) {
 				Point p = array.getPoint(r, c);
 
-				if (p != Point.EMPTY && p != Point.CURRMINO) {
+				if (p == Point.TRASH) {
+					drawTrash(g, r, c);
+				}
+				else if (p == Point.BOMB){
+					drawBomb(g, r, c);
+				}
+				else if (p != Point.EMPTY && p != Point.CURRMINO) {
 					drawBox(g, p.getColor(), r, c);
 				}				
 			}
@@ -594,7 +630,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			needWrite2 = true;
 		}
 		if (needCombo2) {
-			prevCombo = 0;
 			needCombo2 = false;
 		}
 		if (needCombo) {
