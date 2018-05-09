@@ -4,6 +4,8 @@ public enum Point {
 	EMPTY (null),
 	CURRMINO (null),
 	GHOST (null),
+	TRASH (null),
+	BOMB (null),
 	SETMINOI (TetrominoShape.I),
 	SETMINOJ (TetrominoShape.J),
 	SETMINOL (TetrominoShape.L),
