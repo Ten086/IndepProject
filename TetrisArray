@@ -3,7 +3,11 @@ import java.util.ArrayList;
 public class TetrisArray {
 	private Point[][] array = new Point[Grid.ROWS][Grid.COLS];
 	private Grid grid;
-
+	
+	private boolean lasttetris;
+	private boolean lasttspin = false;
+	private boolean clearedLines;
+	
 	public static final int BELOW = 0;
 	public static final int LEFT = 1;
 	public static final int RIGHT = 2;
@@ -105,14 +109,100 @@ public class TetrisArray {
 	
 	public ArrayList<Point[]> getFilledLines() {
 		ArrayList<Point[]> filledLines = new ArrayList<Point[]>();
+		int lines = 0;
+		clearedLines = false;
 		for (Point[] row : array) {
 			if (lineFilled(row)) {
 				filledLines.add(row);
 				grid.incrementLinesCleared();
-				System.out.println("added filled line");
+				lines++;
+				clearedLines = true;
 			}
 		}
+		if (lasttetris && lines == 4) {
+			grid.addScore(5);
+			grid.setWrittenString("Back-to-Back \nTetris");
+			return filledLines;
+		}
+		if (grid.getTspin() && lines > 0) {
+			if (lasttspin) {
+				grid.addScore(lines + 8);
+				if (lines == 1) {
+					grid.setWrittenString("Back-to-Back \nT-Spin Single");
+				} else if (lines == 2) {
+					grid.setWrittenString("Back-to-Back \nT-Spin Double");
+				} else if (lines == 3) {
+					grid.setWrittenString("Back-to-Back \nT-Spin Triple");
+				}
+			} else {
+				if (lines == 1) {
+					grid.setWrittenString("T-Spin Single");
+				} else if (lines == 2) {
+					grid.setWrittenString("T-Spin Double");
+				} else if (lines == 3) {
+					grid.setWrittenString("T-Spin Triple");
+				}
+				grid.addScore(lines + 5);
+			}
+			lasttspin = true;
+			return filledLines;
+		} else if (lines != 0) {
+			lasttspin = false;
+		}
+		if (lines == 4) {
+			lasttetris = true;
+		} else if (lines != 0) {
+			lasttetris = false;
+		}
+		if (lines == 1) {
+			grid.setWrittenString("Single");
+		} else if (lines == 2) {
+			grid.setWrittenString("Double");
+		} else if (lines == 3) {
+			grid.setWrittenString("Triple");
+		} else if (lines == 4) {
+			grid.setWrittenString("Tetris");
+		}
+		grid.addScore(lines);
 		return filledLines;
+	}
+	
+	public boolean immobile(int[][] coords) {
+		boolean up = false;
+		boolean left = false;
+		boolean down = false;
+		boolean right = false;
+		for (int[] i : coords) {
+			try {
+				if (array[i[0] + 1][i[1]] != Point.EMPTY && array[i[0] + 1][i[1]] != Point.CURRMINO) {
+					up = true;
+				}
+			} catch (Exception e) {
+				up = true; 
+			}
+			try {
+				if (array[i[0]][i[1] + 1] != Point.EMPTY && array[i[0]][i[1] + 1] != Point.CURRMINO) {
+					right = true;
+				}
+			} catch (Exception e) {
+				right = true;
+			}
+			try {
+				if (array[i[0] - 1][i[1]] != Point.EMPTY && array[i[0] - 1][i[1]] != Point.CURRMINO) {
+					down = true;
+				}
+			} catch (Exception e) {
+				down = true;
+			}
+			try {
+				if (array[i[0]][i[1] - 1] != Point.EMPTY && array[i[0]][i[1] - 1] != Point.CURRMINO) {
+					left = true;
+				}
+			} catch (Exception e) {
+				left = true;
+			}
+		}
+		return up && left && down && right;
 	}
 	
 	public void clearLines() {
@@ -145,6 +235,10 @@ public class TetrisArray {
 		 * set array to new array
 		 *   
 		 */
+	}
+	
+	public boolean getCleared() {
+		return clearedLines;
 	}
 	
 	public void print() {
