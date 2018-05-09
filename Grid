@@ -43,6 +43,14 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public static final Color RED = new Color(234, 4, 4);
 
 	private boolean dead = false;
+	private boolean needWrite = false;
+	private boolean needWrite2 = false;
+	private int prevCombo;
+	private int combo;
+	private boolean needCombo = false;
+	private boolean needCombo2 = false;
+	private boolean prevRotate = false;
+	private boolean tspin = false;
 
 	private int[] keys = thombusKeys;
 	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
@@ -54,7 +62,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public int linesCleared = 0;
 	private boolean gotHeld = false;
 	private boolean drawX = false;
-	
+	private int score = 0;
+	private String write = "";
+
 	boolean waitTick;
 
 	public Grid() {
@@ -159,12 +169,74 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		drawCurrentMino(g);
 		drawFromArray(g);
 
+		if (needWrite2) {
+			g.setColor(new Color(50, 0, 150));
+			g.setFont(new Font("Dialog", Font.PLAIN, 19));
+			FontMetrics metric = g.getFontMetrics();
+			int lines = 0;
+			for (String s : write.split("\n")) {
+				g.drawString(s, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(s) / 2, 2 * HEIGHT / 3 + lines * (metric.getHeight() + 5));
+				lines++;
+			}
+		}
+		if (needWrite) {
+			g.setColor(new Color(50, 0, 150));
+			g.setFont(new Font("Dialog", Font.PLAIN, 19));
+			FontMetrics metric = g.getFontMetrics();
+			int lines = 0;
+			for (String s : write.split("\n")) {
+				g.drawString(s, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(s) / 2, 2 * HEIGHT / 3 + lines * (metric.getHeight() + 5));
+				lines++;
+			}
+		}
+
+		if (needCombo) {
+			System.out.println(combo);
+			System.out.println(prevCombo);
+			g.setColor(new Color(50, 0, 150));
+			g.setFont(new Font("Dialog", Font.PLAIN, 22));
+			FontMetrics metric = g.getFontMetrics();
+			String s;
+			if (combo > 1) {
+				s = new Integer(combo).toString() + " Combo!";
+			} else if (prevCombo > 1) {
+				s = new Integer(prevCombo).toString() + " Combo!";
+			} else {
+				s = "";
+			}
+			g.drawString(s, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(s) / 2, 3 * HEIGHT / 4);
+		}
+		if (needCombo2) {
+			System.out.println(combo);
+			System.out.println(prevCombo);
+			g.setColor(new Color(50, 0, 150));
+			g.setFont(new Font("Dialog", Font.PLAIN, 22));
+			FontMetrics metric = g.getFontMetrics();
+			String s;
+			if (combo > 1) {
+				s = new Integer(combo).toString() + " Combo!";
+			} else if (prevCombo > 1) {
+				s = new Integer(prevCombo).toString() + " Combo!";
+			} else {
+				s = "";
+			}
+			g.drawString(s, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(s) / 2, 3 * HEIGHT / 4);
+		}
+
 		if (dead) {
 			g.setColor(new Color(151, 0, 149));
 			g.setFont(new Font("Dialog", Font.BOLD, 24));
 			g.drawString("u ded", WIDTH / 3 - XMARGIN / 2, 3 * YMARGIN / 4);
 			g.setFont(new Font("Dialog", Font.BOLD, 6));
 			g.drawString("no u", WIDTH / 3 - XMARGIN / 5 - 11, 5 * YMARGIN / 6);
+		}
+	}
+
+	public void drawLineString(Graphics g, String str, int x, int y) {
+		FontMetrics metric = g.getFontMetrics();
+		int lines = 0;
+		for (String s : str.split("\n")) {
+			g.drawString(s, x, y + lines * (metric.getHeight() + 5));
 		}
 	}
 
@@ -176,15 +248,13 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		FontMetrics metric = g.getFontMetrics();
 		g.drawString("NEXT", NEXTGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth("NEXT") / 2, 3 * (YMARGIN / 2));
 		g.drawString("HOLD", HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth("HOLD") / 2, 3 * (YMARGIN / 2));
-		g.drawString("LINES", HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth("LINES") / 2, HEIGHT / 2);
-		g.drawString("CLEARED", HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth("CLEARED") / 2, HEIGHT / 2 + 20);
+		g.drawString("SCORE", HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth("SCORE") / 2, HEIGHT / 2 + 30);
 
-		g.setFont(new Font("Dialog", Font.BOLD, 40));
+		g.setFont(new Font("Dialog", Font.BOLD, 16));
 		FontMetrics metric2 = g.getFontMetrics();
-		g.drawString(new Integer(linesCleared).toString(), HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric2.stringWidth(new Integer(linesCleared).toString()) / 2, HEIGHT / 2 + 60);
+		g.drawString(new Integer(score).toString(), HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric2.stringWidth(new Integer(score).toString()) / 2, HEIGHT / 2 + 60);
 	}
-	
-	
+
 	public void drawGrid(Graphics g) {	
 		for (int c = 0; c < COLS; c++) {
 			for (int r = 0; r < ROWS; r++) {
@@ -235,28 +305,28 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		g.drawString("X", HOLDGRIDXMARGIN + BIGBOXSIZE - 30, NEXTGRIDYMARGIN + BIGBOXSIZE - 5);
 		drawX = false;
 	}
-	
+
 	public static int getXShift(Color c) {
 		int smolSize = SMOLBOXSIZE;
 		int xShift = 0;	
 		Color iColor = TetrominoShape.I.getColor();
 		Color oColor = TetrominoShape.O.getColor();
-		
+
 		if (c.equals(iColor)) {
 			xShift = -1 * (smolSize / 2);
 		}
 		else if (c.equals(oColor)) {
 			xShift = smolSize / 2;
 		}
-		
+
 		return xShift;
 	}
-	
+
 	public static int getYShift(Color c) {
 		int smolSize = SMOLBOXSIZE;
 		int yShift = 0;		
 		Color iColor = TetrominoShape.I.getColor();
-		
+
 		if (!c.equals(iColor)) {
 			yShift = smolSize / 2;
 		}
@@ -290,7 +360,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		int xShift = 0;
 		int yPos = NEXTGRIDYMARGIN + (row * smolSize) + (BOXSIZE * 3 * index) + smolSize;
 		int yShift = 0;
-		
+
 		g.setColor(c);
 
 		g.fillRect(xPos + 1 + getXShift(c), yPos + 1 + getYShift(c), smolSize - 1, smolSize - 1);
@@ -362,8 +432,13 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		}
 		setCurrentMinoPoints(setPoint);
 	}
-	
+
 	public void newMino() {
+		prevRotate = false;
+		score += 50*combo;
+		if (combo >= 1) {
+			needCombo = true;
+		}
 		currentMino = nextMinos.remove(0);
 		addNextMino(new Tetromino(array));
 		currentMino.setInitialPos();
@@ -372,6 +447,14 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			if (array.getPoint(coord[0], coord[1]) != Point.EMPTY && array.getPoint(coord[0], coord[1]) != Point.CURRMINO) {
 				dead = true;
 			}
+		}
+		if (array.getCleared()) {
+			combo++;
+		} else {
+			if (combo > 1) {
+				prevCombo = combo;
+			}
+			combo = 0;
 		}
 		setCurrentMinoPoints(Point.CURRMINO);
 	}
@@ -409,45 +492,57 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			//left
 			if (keyInt == keys[0] && !collideLeft && !onLeftEdge) {
 				currentMino.changePos(0, -1);
+				prevRotate = false;
 			}	
 
 
 			//right
 			else if (keyInt == keys[1] && !collideRight && !onRightEdge) {
 				currentMino.changePos(0, 1);
+				prevRotate = false;
 				//System.out.println("move right");
 			}
 
 			//down
 			else if (keyInt == keys[2] && !array.checkCollision(currentMino, TetrisArray.BELOW) && !atBottom) {
 				currentMino.changePos(1, 0);
+				score++;
+				prevRotate = false;
 				//System.out.println("move down");
 			}
 
-			//space
+			//hard drop
 			else if (keyInt == keys[3]) {
+				if (prevRotate && currentMino.getShape() == TetrominoShape.T && array.immobile(currentMino.getPos())) {
+					tspin = true;
+				}
+				prevRotate = false;
 				hardDrop();
 				putDownCurrentMino();
-				newMino();
 				gotHeld = false;
 				array.clearLines();
+				tspin = false;
+				newMino();
 				repaint();
 			}
 
 			//rotate cw
 			else if (keyInt == keys[4]) {
+				prevRotate = true;
 				currentMino.rotateCW();
-				System.out.println("cw");
+				//				System.out.println("cw");
 			}
 
 			//rotate ccw
 			else if (keyInt == keys[5]) {
+				prevRotate = true;
 				currentMino.rotateCCW();
-				System.out.println("ccw");
+				//				System.out.println("ccw");
 			}
 
 			//hold
 			else if (keyInt == keys[6]) {
+				prevRotate = false;
 				if (!gotHeld) {
 					gotHeld = true;
 					Tetromino temp;
@@ -480,6 +575,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void hardDrop() {
 		while (!currentMino.atBottom() && !array.checkCollision(currentMino, TetrisArray.BELOW)) {
 			currentMino.changePos(1, 0);
+			score += 2;
 		}
 	}
 
@@ -490,11 +586,25 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
+		if (needWrite2) {
+			needWrite2 = false;
+		}
+		if (needWrite) {
+			needWrite = false;
+			needWrite2 = true;
+		}
+		if (needCombo2) {
+			needCombo2 = false;
+		}
+		if (needCombo) {
+			needCombo = false;
+			needCombo2 = true;
+		}
 		if (!dead) {
 			boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
 			if (!currentMino.atBottom() && !collides) {
 				setCurrentMinoPoints(Point.EMPTY);
-
+				prevRotate = false;
 				currentMino.changePos(1, 0);
 				setCurrentMinoPoints(Point.CURRMINO);
 			}
@@ -505,7 +615,15 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 
 			if (waitTick && (currentMino.atBottom() || collides)) {
+				System.out.println(prevRotate);
+				System.out.println(currentMino.getShape());
+				System.out.println(array.immobile(currentMino.getPos()));
+				if (prevRotate && currentMino.getShape() == TetrominoShape.T && array.immobile(currentMino.getPos())) {
+					tspin = true;
+				}
 				putDownCurrentMino();
+				array.clearLines();
+				tspin = false;
 				newMino();
 				gotHeld = false;
 			}
@@ -513,7 +631,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			if (currentMino.atBottom() || collides) {
 				waitTick = true;
 			}
-
 			array.clearLines();
 			repaint();
 		} else {
@@ -521,8 +638,43 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		}
 	}
 
+	public void addScore(int lines) {
+		if (lines == 1) {
+			score += 100;
+		} else if (lines == 2) {
+			score += 300;
+		} else if (lines == 3) {
+			score += 500;
+		} else if (lines == 4) {
+			score += 800;
+		} else if (lines == 5) {
+			score += 1200;
+		} else if (lines == 6) {
+			score += 700;
+		} else if (lines == 7) {
+			score += 900;
+		} else if (lines == 8) {
+			score += 1100;
+		} else if (lines == 9) {
+			score += 1100;
+		} else if (lines == 10) {
+			score += 1500;
+		} else if (lines == 11) {
+			score += 1900;
+		}
+	}
+
 	public void incrementLinesCleared() {
 		linesCleared++;
+	}
+
+	public void setWrittenString(String newStr) {
+		write = newStr;
+		needWrite = true;
+	}
+
+	public boolean getTspin() {
+		return tspin;
 	}
 
 	public static void print(int[][] array) {
