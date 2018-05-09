@@ -594,6 +594,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			needWrite2 = true;
 		}
 		if (needCombo2) {
+			prevCombo = 0;
 			needCombo2 = false;
 		}
 		if (needCombo) {
