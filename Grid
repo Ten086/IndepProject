@@ -52,7 +52,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private boolean prevRotate = false;
 	private boolean tspin = false;
 
-	private int[] keys = thombusKeys;
+	private int[] keys = heblenKeys;
 	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
 	private Tetromino currentMino;
 	private Tetromino heldMino;
@@ -96,6 +96,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.X_AXIS));
 		f.add(p1);
 		f.add(p2);
+		p1.setOpponent(p2);
+		p2.setOpponent(p1);
 		f.setResizable(false);
 		f.pack();
 		f.addKeyListener(p1);
@@ -104,8 +106,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public static void main(String[] args) {
-		singlePlayerSetup(new Grid());
-		//twoPlayerSetup(new Grid(), new Grid());
+		//singlePlayerSetup(new Grid());
+		twoPlayerSetup(new Grid(), new Grid());
 	}
 
 	public void setUpTimer() {
@@ -204,6 +206,18 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			String s;
 			if (combo > 1) {
 				s = new Integer(combo).toString() + " Combo!";
+				if (combo == 1 || combo == 2) {
+					sendLines(1);
+				}
+				else if (combo == 3 || combo == 4) {
+					sendLines(2);
+				}
+				else if (combo == 5 || combo == 6) {
+					sendLines(3);
+				}
+				else {
+					sendLines(4);
+				}
 			} else if (prevCombo > 1) {
 				s = new Integer(prevCombo).toString() + " Combo!";
 			} else {
@@ -495,7 +509,13 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		setCurrentMinoPoints(Point.CURRMINO);
 	}
 
+	public void sendLines(int lines) {
+		opponent.array.addLines(lines);
+	}
+	
 	public void keyPressed(KeyEvent e) {
+		array.print();
+		System.out.println();
 		if (!dead) {
 			int keyInt = e.getKeyCode();
 			boolean onLeftEdge = false;
@@ -644,11 +664,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				currentMino.changePos(1, 0);
 				setCurrentMinoPoints(Point.CURRMINO);
 			}
-
-
-			//		array.print();
-			//		System.out.println();
-
 
 			if (waitTick && (currentMino.atBottom() || collides)) {
 				System.out.println(prevRotate);
