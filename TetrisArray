@@ -271,7 +271,18 @@ public class TetrisArray {
 	public boolean getCleared() {
 		return clearedLines;
 	}
-
+	
+	public boolean checkPerfClear() {
+		for (Point[] i : array) {
+			for (Point j : i) {
+				if (j != Point.EMPTY && j != Point.CURRMINO) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	public void print() {
 		for (Point[] row : array) {
 			for (Point p : row) {
