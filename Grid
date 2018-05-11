@@ -51,6 +51,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private boolean needCombo2 = false;
 	private boolean prevRotate = false;
 	private boolean tspin = false;
+	private boolean needpc = false;
+	private boolean needpc2 = false;
 
 	private int[] keys = heblenKeys;
 	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
@@ -241,7 +243,24 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			}
 			g.drawString(s, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(s) / 2, 3 * HEIGHT / 4);
 		}
-
+		if (needpc) {
+			g.setColor(new Color(50, 0, 150));
+			g.setFont(new Font("Dialog", Font.PLAIN, 22));
+			FontMetrics metric = g.getFontMetrics();
+			String s = "Perfect";
+			String t = "Clear!";
+			g.drawString(s, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(s) / 2, 3 * HEIGHT / 4 + 50);
+			g.drawString(t, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(t) / 2, 3 * HEIGHT / 4 + 55 + metric.getHeight());
+		}
+		if (needpc2) {
+			g.setColor(new Color(50, 0, 150));
+			g.setFont(new Font("Dialog", Font.PLAIN, 22));
+			FontMetrics metric = g.getFontMetrics();
+			String s = "Perfect";
+			String t = "Clear!";
+			g.drawString(s, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(s) / 2, 3 * HEIGHT / 4 + 50);
+			g.drawString(t, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(t) / 2, 3 * HEIGHT / 4 + 55 + metric.getHeight());
+		}
 		if (dead) {
 			g.setColor(new Color(151, 0, 149));
 			g.setFont(new Font("Dialog", Font.BOLD, 24));
@@ -498,6 +517,10 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				dead = true;
 			}
 		}
+		if (array.checkPerfClear()) {
+			score += 2000;
+			needpc = true;
+		}
 		if (array.getCleared()) {
 			combo++;
 		} else {
@@ -656,6 +679,13 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			needCombo = false;
 			needCombo2 = true;
 		}
+		if (needpc2) {
+			needpc2 = false;
+		}
+		if (needpc) {
+			needpc2 = true;
+			needpc = false;
+		} 
 		if (!dead) {
 			boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
 			if (!currentMino.atBottom() && !collides) {
