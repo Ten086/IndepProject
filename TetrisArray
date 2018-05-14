@@ -3,11 +3,11 @@ import java.util.ArrayList;
 public class TetrisArray {
 	private Point[][] array = new Point[Grid.ROWS][Grid.COLS];
 	private Grid grid;
-	
+
 	private boolean lasttetris;
 	private boolean lasttspin = false;
 	private boolean clearedLines;
-	
+
 	public static final int BELOW = 0;
 	public static final int LEFT = 1;
 	public static final int RIGHT = 2;
@@ -20,7 +20,7 @@ public class TetrisArray {
 	public Point getPoint(int r, int c) {
 		return array[r][c];
 	}
-	
+
 	public void setAllEmpty() {
 		for (int i = 0; i < Grid.ROWS; i++) {
 			for (int j = 0; j < Grid.COLS; j++) {
@@ -42,7 +42,7 @@ public class TetrisArray {
 		}
 		return hasPoint;
 	}
-	
+
 	public boolean checkCollision(Tetromino mino, int direction) {
 		boolean collides = false;
 		for (int[] coord : mino.getPos()) {
@@ -54,7 +54,7 @@ public class TetrisArray {
 		}
 		return collides;
 	}
-	
+
 	public boolean checkCollision(int[][] coords, int direction) {
 		boolean collides = false;
 		for (int[] coord : coords) {
@@ -66,7 +66,7 @@ public class TetrisArray {
 		}
 		return collides;
 	}
-	
+
 	public boolean checkCollision(int r, int c, int direction) {
 		boolean collides = false;
 		Point pointToCheck = null;
@@ -84,36 +84,48 @@ public class TetrisArray {
 				collides = true;
 			}
 		}
+		if (pointToCheck == Point.TRASH || pointToCheck == Point.BOMB) {
+			collides = true;
+		}
 		return collides;
 	}
-	
+
+	public boolean bombCollides(int r, int c) {
+		boolean collides = false;
+		Point pointToCheck = array[r-1][c];
+		if (pointToCheck != Point.EMPTY) {
+			collides = true;
+		}
+		return collides;
+	}
+
 	public boolean lineFilled(int r) {
 		boolean filled = true;
-		for (Point p : array[r]) {
-			if (!p.isSetPoint()) {
-				filled = false;
+		if (array[r][0] != Point.TRASH && array[r][0] != Point.BOMB) {
+			for (Point p : array[r]) {
+				if (!p.isSetPoint()) {
+					filled = false;
+				}
 			}
 		}
-		return filled;
-	}
-	
-	public boolean lineFilled(Point[] row) {
-		boolean filled = true;
-		for (Point p : row) {
-			if (!p.isSetPoint()) {
-				filled = false;
+		else {
+			for (int c = 0; c < Grid.COLS; c++) {
+				if (array[r][c] == Point.BOMB) {
+					filled = bombCollides(r, c);
+				}
 			}
 		}
+
 		return filled;
 	}
-	
+
 	public ArrayList<Point[]> getFilledLines() {
 		ArrayList<Point[]> filledLines = new ArrayList<Point[]>();
 		int lines = 0;
 		clearedLines = false;
-		for (Point[] row : array) {
-			if (lineFilled(row)) {
-				filledLines.add(row);
+		for (int r = 0; r < Grid.ROWS; r++) {
+			if (lineFilled(r)) {
+				filledLines.add(array[r]);
 				grid.incrementLinesCleared();
 				lines++;
 				clearedLines = true;
@@ -177,7 +189,7 @@ public class TetrisArray {
 		grid.addScore(lines);
 		return filledLines;
 	}
-	
+
 	public boolean immobile(int[][] coords) {
 		boolean up = false;
 		boolean left = false;
@@ -215,41 +227,45 @@ public class TetrisArray {
 		}
 		return up && left && down && right;
 	}
-	
+
 	public void addLines(int lines) {
 		ArrayList<Point[]> newLines = new ArrayList<Point[]>();
 		Point[][] newArray = new Point[Grid.ROWS][Grid.COLS];
-		
+
 		for (int r = 0; r < Grid.ROWS; r++) {
 			for (int c = 0; c < Grid.COLS; c++) {
 				newArray[r][c] = Point.EMPTY;
 			}
 		}
-		
+
 		for (int i = 0; i < lines; i++) {
 			Point[] row = new Point[Grid.COLS];
 			for (int j = 0; j < row.length; j++) {
 				row[j] = Point.TRASH;
 			}
-			row[(int)(Math.random() * Grid.COLS) + 1] = Point.BOMB;
+			int bombIndex = (int)(Math.random() * (Grid.COLS - 1));
+			//System.out.println("bomb at " + bombIndex);
+			row[bombIndex] = Point.BOMB;
 			newLines.add(row);
 		}
-		
-		for (int r = 0; r < newLines.size(); r++) {
-			newArray[Grid.ROWS - r - 1] = newLines.get(r);
+
+		for (int r = Grid.ROWS - 1; r >= 0; r--) {
+			newLines.add(array[r]);
 		}
-		
-		/*for (int r = newLines.size() - 1; newLines.size() - 1 + r < Grid.ROWS; r++) {
-			newArray[Grid.ROWS - newLines.size() - 2 - r] = array[newLines.size() - 1 + r];
-		}*/
+
+		for (int r = 0; r < Grid.ROWS - 1; r++) {
+			newArray[Grid.ROWS - 1 - r] = newLines.get(r);
+		}
+
 		array = newArray;
+		//print();
 	}
-	
+
 	public void clearLines() {
 		ArrayList<Point[]> filledLines = getFilledLines();
 		ArrayList<Point[]> newArrayRows = new ArrayList<Point[]>();
 		Point[][] newArray = new Point[Grid.ROWS][Grid.COLS];
-		
+
 		for (int r = 0; r < Grid.ROWS; r++) {
 			for (int c = 0; c < Grid.COLS; c++) {
 				newArray[r][c] = Point.EMPTY;
@@ -261,17 +277,17 @@ public class TetrisArray {
 				newArrayRows.add(row);
 			}
 		}
-		
+
 		for (int r = newArrayRows.size() - 1; r >= 0; r--) {
 			newArray[Grid.ROWS - r - 1] = newArrayRows.get(r);
 		}
 		array = newArray;
 	}
-	
+
 	public boolean getCleared() {
 		return clearedLines;
 	}
-	
+
 	public boolean checkPerfClear() {
 		for (Point[] i : array) {
 			for (Point j : i) {
@@ -282,7 +298,7 @@ public class TetrisArray {
 		}
 		return true;
 	}
-	
+
 	public void print() {
 		for (Point[] row : array) {
 			for (Point p : row) {
