@@ -18,6 +18,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private static int[] heblenKeys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_X, KeyEvent.VK_Z, KeyEvent.VK_SHIFT};
 	private static int[] leftKeys = {KeyEvent.VK_G, KeyEvent.VK_J, KeyEvent.VK_H, KeyEvent.VK_SPACE, KeyEvent.VK_Z, KeyEvent.VK_X};
 	private static int[] rightKeys = {KeyEvent.VK_1, KeyEvent.VK_5, KeyEvent.VK_3, KeyEvent.VK_2, KeyEvent.VK_ALT, KeyEvent.VK_CONTROL};
+	private static int[] testKeys = {KeyEvent.VK_NUMPAD4, KeyEvent.VK_NUMPAD6, KeyEvent.VK_NUMPAD5, KeyEvent.VK_NUMPAD2, KeyEvent.VK_NUMPAD8, KeyEvent.VK_NUMPAD9, KeyEvent.VK_ADD};
 	//L, R, SD, HD, rotCW, rotCCW, hold
 
 	public static final int WIDTH = 550;
@@ -100,6 +101,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		f.add(p2);
 		p1.setOpponent(p2);
 		p2.setOpponent(p1);
+		p1.setKeys(heblenKeys);
+		p2.setKeys(testKeys);
 		f.setResizable(false);
 		f.pack();
 		f.addKeyListener(p1);
@@ -376,9 +379,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void drawTrash(Graphics g, int row, int col) {
-		for (int c = 0; c < COLS; c++) {
-			drawBox(g, Color.LIGHT_GRAY, row, c);
-		}
+		//for (int c = 0; c < COLS; c++) {
+			drawBox(g, Color.LIGHT_GRAY, row, col);
+		//}
 	}
 	
 	public void drawBomb(Graphics g, int row, int col) {
@@ -387,15 +390,16 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		int arcXPos = GRIDXMARGIN + (col * BOXSIZE) + 5;
 		int arcYPos = YMARGIN + (row * BOXSIZE) + 5;
 		int arcSize = BOXSIZE - 10;
-		 
+		//Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW};
+		//Color c = colors[(int)(Math.random() * 3)];
 		drawBox(g, Color.BLACK, row, col);
-		g.setColor(Color.RED);
+		g.setColor(Color.YELLOW);
 		g.fillArc(arcXPos, arcYPos, arcSize, arcSize, 0, 60);
 		g.fillArc(arcXPos, arcYPos, arcSize, arcSize, 120, 60);
 		g.fillArc(arcXPos, arcYPos, arcSize, arcSize, 240, 60);
 		g.setColor(Color.BLACK);
 		g.fillOval(xPos + BOXSIZE / 2 - 4, yPos + BOXSIZE / 2 - 4, 10, 10);
-		g.setColor(Color.RED);
+		g.setColor(Color.YELLOW);
 		g.fillOval(xPos + BOXSIZE / 2, yPos + BOXSIZE / 2, 3, 3);
 		
 	}
@@ -537,8 +541,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 	
 	public void keyPressed(KeyEvent e) {
-		array.print();
-		System.out.println();
+		//array.print();
+		//System.out.println();
 		if (!dead) {
 			int keyInt = e.getKeyCode();
 			boolean onLeftEdge = false;
