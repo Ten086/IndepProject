@@ -1,0 +1,64 @@
+big sad. Eclipse hates me and copy pasting takes forever sooo
+
+in Grid:
+public void hardDrop() {
+		while (!currentMino.atBottom() && !array.checkCollision(currentMino, TetrisArray.BELOW)) {
+			currentMino.changePos(1, 0);
+			score += 2;
+		}
+    if (array.checkCollisionBomb(currentMino) {
+      array.clearLines();
+    }
+}
+
+in TetrisArray:
+public boolean checkCollisionBomb(int r, int c) {
+		boolean collides = false;
+		Point pointToCheck = array[r-1][c];
+		if (r-1 < Grid.ROWS && pointToCheck.isSetPoint()) {
+			collides = true;
+		}
+		return collides;
+}
+
+public boolean checkCollisionBomb(Tetromino mino) {
+    boolean collides = false;
+		for (int[] coord : mino.getPos()) {
+			int row = coord[0];
+			int col = coord[1];
+			if (checkCollisionBomb(row, col)) {
+				collides = true;
+			}
+		}
+		return collides;
+}
+
+public boolean getBombRow(Tetromino mino) {
+    int bombRow = 0;
+    for (int[] coord : mino.getPos()) {
+      int row = coord[0];
+      int col = coord[1];
+      if (checkCollisionBomb(row, col)) {
+          bombRow = row - 1;
+      }
+		}
+}
+
+public boolean lineFilled(int r) {
+		boolean filled = true;
+		if (array[r][0] != Point.TRASH && array[r][0] != Point.BOMB) {
+			for (Point p : array[r]) {
+				if (!p.isSetPoint()) {
+					filled = false;
+				}
+			}
+		}
+    else {
+      if (checkCollisionBomb(grid.getCurrentMino())) {
+        if (r == getBombRow(grid.getCurrentMino())) {
+          filled = true;
+        }
+      }
+    }
+		return filled;
+}
