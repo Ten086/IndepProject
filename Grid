@@ -19,8 +19,10 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private static int[] leftKeys = {KeyEvent.VK_G, KeyEvent.VK_J, KeyEvent.VK_H, KeyEvent.VK_SPACE, KeyEvent.VK_Z, KeyEvent.VK_X};
 	private static int[] rightKeys = {KeyEvent.VK_1, KeyEvent.VK_5, KeyEvent.VK_3, KeyEvent.VK_2, KeyEvent.VK_ALT, KeyEvent.VK_CONTROL};
 	private static int[] testKeys = {KeyEvent.VK_NUMPAD4, KeyEvent.VK_NUMPAD6, KeyEvent.VK_NUMPAD5, KeyEvent.VK_NUMPAD2, KeyEvent.VK_NUMPAD8, KeyEvent.VK_NUMPAD9, KeyEvent.VK_ADD};
+	private static int[] p1Keys = {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_Z, KeyEvent.VK_W, KeyEvent.VK_CONTROL, KeyEvent.VK_SHIFT};
+	private static int[] p2Keys = {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE, KeyEvent.VK_UP, KeyEvent.VK_U, KeyEvent.VK_T};
 	//L, R, SD, HD, rotCW, rotCCW, hold
-
+	
 	public static final int WIDTH = 550;
 	public static final int HEIGHT = 800;
 	public static final int BOXSIZE = 30;
@@ -42,7 +44,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public static final Color GREEN = new Color (5, 239, 7);
 	public static final Color PURPLE = new Color(164, 4, 229);
 	public static final Color RED = new Color(234, 4, 4);
-
+	
+	private boolean win = false;
 	private boolean dead = false;
 	private boolean needWrite = false;
 	private boolean needWrite2 = false;
@@ -55,7 +58,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	private boolean needpc = false;
 	private boolean needpc2 = false;
 
-	private int[] keys = heblenKeys;
+	private int[] keys;
 	private ArrayList<Tetromino> nextMinos = new ArrayList<Tetromino>();
 	private Tetromino currentMino;
 	private Tetromino heldMino;
@@ -72,13 +75,14 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	
 	private Grid opponent;
 
-	public Grid() {
+	public Grid(int[] kesy) {
 		for (int i = 0; i < 6; i++) {
 			addNextMino(new Tetromino(array));
 		}
 		setCurrentMino(nextMinos.remove(0));
 		currentMino.setInitialPos();
 		setUpTimer();
+		keys = kesy;
 	}
 
 	public static void singlePlayerSetup(Grid player) {
@@ -101,8 +105,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		f.add(p2);
 		p1.setOpponent(p2);
 		p2.setOpponent(p1);
-		p1.setKeys(heblenKeys);
-		p2.setKeys(testKeys);
 		f.setResizable(false);
 		f.pack();
 		f.addKeyListener(p1);
@@ -112,7 +114,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public static void main(String[] args) {
 		//singlePlayerSetup(new Grid());
-		twoPlayerSetup(new Grid(), new Grid());
+		twoPlayerSetup(new Grid(p1Keys), new Grid(p2Keys));
 	}
 
 	public void setUpTimer() {
@@ -270,6 +272,14 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			g.drawString("u ded", WIDTH / 3 - XMARGIN / 2, 3 * YMARGIN / 4);
 			g.setFont(new Font("Dialog", Font.BOLD, 6));
 			g.drawString("no u", WIDTH / 3 - XMARGIN / 5 - 11, 5 * YMARGIN / 6);
+		}
+		
+		if (win) {
+			g.setColor(new Color(151, 0, 149));
+			g.setFont(new Font("Dialog", Font.BOLD, 24));
+			g.setColor(new Color(151, 0, 149));
+			g.setFont(new Font("Dialog", Font.BOLD, 24));
+			g.drawString("u win", WIDTH / 3 - XMARGIN / 2, 3 * YMARGIN / 4);
 		}
 	}
 
@@ -519,6 +529,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		for (int[] coord : currentMino.getPos()) {
 			if (array.getPoint(coord[0], coord[1]) != Point.EMPTY && array.getPoint(coord[0], coord[1]) != Point.CURRMINO) {
 				dead = true;
+				opponent.setWin(true);
+				stopTimer();
+				opponent.stopTimer();
 			}
 		}
 		if (array.checkPerfClear()) {
@@ -543,7 +556,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void keyPressed(KeyEvent e) {
 		//array.print();
 		//System.out.println();
-		if (!dead) {
+		if (!dead && !win) {
 			int keyInt = e.getKeyCode();
 			boolean onLeftEdge = false;
 			boolean onRightEdge = false;
@@ -690,7 +703,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			needpc2 = true;
 			needpc = false;
 		} 
-		if (!dead) {
+		if (!dead && !win) {
 			boolean collides = array.checkCollision(currentMino, TetrisArray.BELOW);
 			if (!currentMino.atBottom() && !collides) {
 				setCurrentMinoPoints(Point.EMPTY);
@@ -758,10 +771,18 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		needWrite = true;
 	}
 
+	public void setWin(boolean wni) {
+		win = wni;
+	}
+	
 	public boolean getTspin() {
 		return tspin;
 	}
-
+	
+	public void stopTimer() {
+		timer.stop();
+	}
+	
 	public static void print(int[][] array) {
 		for (int[] i : array) {
 			System.out.println(Arrays.toString(i));
