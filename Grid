@@ -139,6 +139,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public Grid getOpponent() {
 		return opponent;
 	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
@@ -516,9 +517,9 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				if (p == Point.TRASH) {
 					drawTrash(g, r, c);
 				}
-				/*else if (p == Point.BOMB){
+				else if (p == Point.BOMB){
 					drawBomb(g, r, c);
-				}*/
+				}
 				else if (p != Point.EMPTY && p != Point.CURRMINO) {
 					drawBox(g, p.getColor(), r, c);
 				}				
