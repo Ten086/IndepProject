@@ -84,10 +84,7 @@ public class TetrisArray {
 				collides = true;
 			}
 		}
-		/*if (pointToCheck == Point.TRASH || pointToCheck == Point.BOMB) {
-			collides = true;
-		}*/
-		if (pointToCheck == Point.TRASH) {
+		if (pointToCheck == Point.TRASH || pointToCheck == Point.BOMB) {
 			collides = true;
 		}
 		return collides;
@@ -104,20 +101,20 @@ public class TetrisArray {
 
 	public boolean lineFilled(int r) {
 		boolean filled = true;
-		//if (array[r][0] != Point.TRASH && array[r][0] != Point.BOMB) {
+		if (array[r][0] != Point.TRASH && array[r][0] != Point.BOMB) {
 			for (Point p : array[r]) {
 				if (!p.isSetPoint()) {
 					filled = false;
 				}
 			}
-		//}
-		/*else {
+		}
+		else {
 			for (int c = 0; c < Grid.COLS; c++) {
 				if (array[r][c] == Point.BOMB) {
 					filled = bombCollides(r, c);
 				}
 			}
-		}*/
+		}
 
 		return filled;
 	}
@@ -247,8 +244,7 @@ public class TetrisArray {
 				row[j] = Point.TRASH;
 			}
 			int bombIndex = (int)(Math.random() * (Grid.COLS - 1));
-			//System.out.println("bomb at " + bombIndex);
-			row[bombIndex] = Point.EMPTY;
+			row[bombIndex] = Point.BOMB;
 			newLines.add(row);
 		}
 
