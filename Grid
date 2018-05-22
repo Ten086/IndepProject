@@ -768,7 +768,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			if (currentMino.atBottom() || collides) {
 				waitTick = true;
 			}
-			array.clearLines();
 			repaint();
 		} else {
 			repaint();
