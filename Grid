@@ -48,15 +48,15 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public static final Color GREEN = new Color (5, 239, 7);
 	public static final Color PURPLE = new Color(164, 4, 229);
 	public static final Color RED = new Color(234, 4, 4);
-
+	
+	private int numPlaced = 0;
 	private boolean win = false;
 	private boolean dead = false;
 	private boolean needWrite = false;
 	private boolean needWrite2 = false;
-	private int prevCombo;
 	private int combo;
+	private boolean alreadyAddedLines = false;
 	private boolean needCombo = false;
-	private boolean needCombo2 = false;
 	private boolean prevRotate = false;
 	private boolean tspin = false;
 	private boolean needpc = false;
@@ -217,44 +217,27 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		}
 
 		if (needCombo) {
-			System.out.println(combo);
-			System.out.println(prevCombo);
 			g.setColor(new Color(50, 0, 150));
 			g.setFont(new Font("Dialog", Font.PLAIN, 22));
 			FontMetrics metric = g.getFontMetrics();
 			String s;
 			if (combo > 1) {
 				s = new Integer(combo).toString() + " Combo!";
-				if (combo == 1 || combo == 2) {
-					opponent.addBarLines(1);
+				if (!alreadyAddedLines) {
+					if (combo == 1 || combo == 2) {
+						opponent.addBarLines(1);
+					}
+					else if (combo == 3 || combo == 4) {
+						opponent.addBarLines(2);
+					}
+					else if (combo == 5 || combo == 6) {
+						opponent.addBarLines(3);
+					}
+					else {
+						opponent.addBarLines(4);
+					}
+					alreadyAddedLines = true;
 				}
-				else if (combo == 3 || combo == 4) {
-					opponent.addBarLines(2);
-				}
-				else if (combo == 5 || combo == 6) {
-					opponent.addBarLines(3);
-				}
-				else {
-					opponent.addBarLines(4);
-				}
-			} else if (prevCombo > 1) {
-				s = new Integer(prevCombo).toString() + " Combo!";
-			} else {
-				s = "";
-			}
-			g.drawString(s, HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth(s) / 2, 3 * HEIGHT / 4);
-		}
-		if (needCombo2) {
-			System.out.println(combo);
-			System.out.println(prevCombo);
-			g.setColor(new Color(50, 0, 150));
-			g.setFont(new Font("Dialog", Font.PLAIN, 22));
-			FontMetrics metric = g.getFontMetrics();
-			String s;
-			if (combo > 1) {
-				s = new Integer(combo).toString() + " Combo!";
-			} else if (prevCombo > 1) {
-				s = new Integer(prevCombo).toString() + " Combo!";
 			} else {
 				s = "";
 			}
@@ -563,17 +546,16 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				opponent.stopTimer();
 			}
 		}
-		if (array.checkPerfClear()) {
+		if (array.checkPerfClear() && numPlaced > 0) {
 			score += 2000;
 			needpc = true;
 		}
 		if (array.getCleared()) {
 			combo++;
+			alreadyAddedLines = false;
 		} else {
-			if (combo > 1) {
-				prevCombo = combo;
-			}
 			combo = 0;
+			alreadyAddedLines = false;
 		}
 		setCurrentMinoPoints(Point.CURRMINO);
 	}
@@ -652,11 +634,13 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				}
 				prevRotate = false;
 				hardDrop();
+				int[][] pos = currentMino.getPos();
 				putDownCurrentMino();
 				gotHeld = false;
-				array.clearLines();
+				array.clearLines(pos);
 				tspin = false;
 				newMino();
+				numPlaced++;
 				repaint();
 			}
 
@@ -729,12 +713,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			needWrite = false;
 			needWrite2 = true;
 		}
-		if (needCombo2) {
-			needCombo2 = false;
-		}
 		if (needCombo) {
 			needCombo = false;
-			needCombo2 = true;
 		}
 		if (needpc2) {
 			needpc2 = false;
@@ -753,14 +733,13 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			}
 
 			if (waitTick && (currentMino.atBottom() || collides)) {
-				System.out.println(prevRotate);
-				System.out.println(currentMino.getShape());
-				System.out.println(array.immobile(currentMino.getPos()));
 				if (prevRotate && currentMino.getShape() == TetrominoShape.T && array.immobile(currentMino.getPos())) {
 					tspin = true;
 				}
+				int[][] pos = currentMino.getPos();
 				putDownCurrentMino();
-				array.clearLines();
+				numPlaced++;
+				array.clearLines(pos);
 				tspin = false;
 				newMino();
 				gotHeld = false;
