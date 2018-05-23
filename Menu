@@ -9,6 +9,7 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 
 	public final static int buttonWidth = 200;
 	public final static int buttonHeight = 80;
+	public JFrame frame;
 	public int selected = 0;
 	public int[] origXPos = {25, 25, 250, 250};
 	public int[] origYPos = {150, 250, 150, 250};
@@ -24,7 +25,7 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 	}
 
 	public Menu(int w, int h) {
-		JFrame frame = new JFrame();
+		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setMinimumSize(new Dimension(w, h));
 		frame.setLocation(300, 200);
@@ -82,7 +83,8 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 		}
 		repaint();
 		if (selected > 0) {
-			
+			frame.dispose();
+			HelpMenu h = new HelpMenu(500, 500, selected);
 		}
 	}
 
