@@ -1,12 +1,28 @@
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
 import javax.swing.*;
 
-public class Menu extends JPanel {
-	
+public class Menu extends JPanel implements MouseMotionListener, MouseListener {
+
+	public final static int buttonWidth = 200;
+	public final static int buttonHeight = 80;
+	public int selected = 0;
+	public int[] origXPos = {25, 25, 250, 250};
+	public int[] origYPos = {150, 250, 150, 250};
+	public int[] buttonXPos = {25, 25, 250, 250};
+	public int[] buttonYPos = {150, 250, 150, 250};
+	public int[] buttonWidths = {200, 200, 200, 200};
+	public int[] buttonHeights = {80, 80, 80, 80};
+	public int increase = 5;
+	public int shift = increase / 2;
+
 	public static void main(String[] args) {
 		Menu m = new Menu(500, 500);
 	}
-	
+
 	public Menu(int w, int h) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -14,20 +30,109 @@ public class Menu extends JPanel {
 		frame.setLocation(300, 200);
 		frame.setVisible(true);
 		frame.add(this);
+		frame.addMouseListener(this);
+		frame.addMouseMotionListener(this);
+		frame.pack();
+		frame.setResizable(false);
 		repaint();
 	}
-	
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		int buttonWidth = 200;
-		int buttonHeight = 80;
+
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, 500, 500);
+
 		g.setColor(Color.BLACK);
 		g.setFont(new Font("Dialog", Font.PLAIN, 30));
 		g.drawString("Tetris", 200, 100);
-		g.setColor(Color.BLUE);
-		g.fillRect(25, 150, buttonWidth, buttonHeight);
-		g.fillRect(250, 150, buttonWidth, buttonHeight);
-		g.fillRect(25, 250, buttonWidth, buttonHeight);
-		g.fillRect(250, 250, buttonWidth, buttonHeight);
+
+		g.setColor(Grid.LIGHTBLUE);
+		g.fillRect(buttonXPos[0], buttonYPos[0], buttonWidths[0], buttonHeights[0]);
+		g.setColor(Grid.GREEN);
+		g.fillRect(buttonXPos[1], buttonYPos[1], buttonWidths[1], buttonHeights[1]);
+		g.setColor(Grid.ORANGE);
+		g.fillRect(buttonXPos[2], buttonYPos[2], buttonWidths[2], buttonHeights[2]);
+		g.setColor(Grid.PURPLE);
+		g.fillRect(buttonXPos[3], buttonYPos[3], buttonWidths[3], buttonHeights[3]);
+		g.setFont(new Font("Dialog", Font.PLAIN, 20));
+
+		g.setColor(Color.WHITE);
+		g.drawString("Single Player", 68, 195);
+		g.drawString("Two Player Race", 275, 195);
+		g.drawString("Two Player Bombs", 40, 295);
+		g.drawString("Two Player Gaps", 275, 295);
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		boolean inBox = false;
+		for (int i = 0; i < buttonWidths.length; i++) {
+			int x = buttonXPos[i];
+			int y = buttonYPos[i];
+			int w = buttonWidths[i];
+			int h = buttonHeights[i];
+			if (e.getX() >= x && e.getX() <= x + w 
+				&& e.getY() >= y && e.getY() <= y + h) {
+				selected = i + 1;
+				inBox = true;
+			}
+		}
+		if (!inBox) {
+			selected = 0;
+		}
+		repaint();
+		if (selected > 0) {
+			
+		}
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent arg0) {
+	}
+
+	public void mousePressed(MouseEvent arg0) {
+	}
+
+	public void mouseReleased(MouseEvent arg0) {
+	}
+
+	public void mouseDragged(MouseEvent arg0) {
+	}
+
+	public void resetButtons() {
+		buttonXPos = new int[] {25, 25, 250, 250};
+		buttonYPos = new int[] {150, 250, 150, 250};
+		for (int i = 0; i < buttonWidths.length; i++) {
+			buttonWidths[i] = buttonWidth;
+			buttonHeights[i] = buttonHeight;
+		}
+	}
+	
+	public void larg(int i) {
+		buttonXPos[i] = origXPos[i] - shift;
+		buttonYPos[i] = origYPos[i] - shift;
+		buttonWidths[i] = buttonWidth + increase;
+		buttonHeights[i] = buttonHeight + 5;
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		boolean inBox = false;
+		for (int i = 0; i < buttonWidths.length; i++) {
+			int x = buttonXPos[i];
+			int y = buttonYPos[i];
+			int w = buttonWidths[i];
+			int h = buttonHeights[i];
+			if (e.getX() >= x && e.getX() <= x + w 
+				&& e.getY() >= y && e.getY() <= y + h) {
+				inBox = true;
+				larg(i);
+			}
+			if (!inBox) {
+				resetButtons();
+			}
+		}
+		repaint();
 	}
 }
