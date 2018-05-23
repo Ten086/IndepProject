@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TetrisArray {
 	private Point[][] array = new Point[Grid.ROWS][Grid.COLS];
@@ -99,7 +100,7 @@ public class TetrisArray {
 		return collides;
 	}
 
-	public boolean lineFilled(int r) {
+	public boolean lineFilled(int r, int[][] pos) {
 		boolean filled = true;
 		if (array[r][0] != Point.TRASH && array[r][0] != Point.BOMB) {
 			for (Point p : array[r]) {
@@ -109,9 +110,12 @@ public class TetrisArray {
 			}
 		}
 		else {
-			for (int c = 0; c < Grid.COLS; c++) {
-				if (array[r][c] == Point.BOMB) {
-					filled = bombCollides(r, c);
+			filled = false;
+			for (int[] i : pos) {
+				System.out.println(Arrays.toString(i));
+				System.out.println(array[i[0] + 1][i[1]]);
+				if (array[i[0] + 1][i[1]] == Point.BOMB && i[0] + 1 == r) {
+					filled = true;
 				}
 			}
 		}
@@ -119,12 +123,12 @@ public class TetrisArray {
 		return filled;
 	}
 
-	public ArrayList<Point[]> getFilledLines() {
+	public ArrayList<Point[]> getFilledLines(int[][] pos) {
 		ArrayList<Point[]> filledLines = new ArrayList<Point[]>();
 		int lines = 0;
 		clearedLines = false;
 		for (int r = 0; r < Grid.ROWS; r++) {
-			if (lineFilled(r)) {
+			if (lineFilled(r, pos)) {
 				filledLines.add(array[r]);
 				grid.incrementLinesCleared();
 				lines++;
@@ -134,7 +138,7 @@ public class TetrisArray {
 		if (lasttetris && lines == 4) {
 			grid.addScore(5);
 			grid.setWrittenString("Back-to-Back \nTetris");
-			//sends 6 lines
+			grid.getOpponent().addBarLines(6);
 			return filledLines;
 		}
 		if (grid.getTspin() && lines > 0) {
@@ -257,11 +261,11 @@ public class TetrisArray {
 		}
 
 		array = newArray;
-		//print();
+		print();
 	}
 
-	public void clearLines() {
-		ArrayList<Point[]> filledLines = getFilledLines();
+	public void clearLines(int[][] pos) {
+		ArrayList<Point[]> filledLines = getFilledLines(pos);
 		ArrayList<Point[]> newArrayRows = new ArrayList<Point[]>();
 		Point[][] newArray = new Point[Grid.ROWS][Grid.COLS];
 
