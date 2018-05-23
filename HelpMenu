@@ -1,0 +1,98 @@
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.*;
+
+public class HelpMenu extends JPanel implements MouseListener{
+
+	public int mode = 0;
+	
+	public HelpMenu(int w, int h, int m) {
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setMinimumSize(new Dimension(w, h));
+		frame.setLocation(300, 200);
+		frame.setVisible(true);
+		frame.add(this);
+		frame.addMouseListener(this);
+		frame.pack();
+		frame.setResizable(false);
+		mode = m;
+		repaint();
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, 500, 500);
+		
+		g.setColor(Color.BLACK);
+		g.setFont(new Font("Dialog", Font.PLAIN, 30));
+		g.drawString("Controls", 175, 50);
+		
+		if (mode == 1) {
+			drawSingleControls(g);
+		}
+		else {
+			drawDoubleControls(g);
+		}
+	}
+	
+	public void drawSingleControls(Graphics g) {
+	
+	}
+	
+	public void drawDoubleControls(Graphics g) {
+		g.setFont(new Font("Dialog", Font.PLAIN, 20));
+		g.drawString("Player 1", 50, 70);
+		int size = 40;
+		
+		g.drawRect(60, 100, size, size);
+		g.drawRect(20, 140, size, size);
+		g.drawRect(60, 140, size, size);
+		g.drawRect(100, 140, size, size);
+		g.drawRect(10, 250, size * 2, size);
+		g.drawRect(110, 250, size, size);
+		
+		g.drawString("W", 72, 130);
+		g.drawString("A", 35, 168);
+		g.drawString("S", 75, 168);
+		g.drawString("D", 114, 168);
+		g.drawString("Shift", 32, 278);
+		g.drawString("Z", 125, 278);
+		
+		g.drawLine(95, 120, 110, 100);
+		g.drawLine(35, 170, 20, 190);
+		g.drawLine(80, 170, 80, 190);
+		g.drawLine(120, 170, 135, 190);
+		g.drawLine(50, 285, 50, 310);
+		g.drawLine(130, 285, 130, 310);
+		
+		g.setFont(new Font("Dialog", Font.PLAIN, 15));
+		g.drawString("rotate", 115, 97);
+		g.drawString("left", 15, 210);
+		g.drawString("down", 65, 210);
+		g.drawString("right", 130, 210);
+		g.drawString("hold", 40, 325);
+		g.drawString("drop", 115, 325);
+	}
+	
+	public void mouseClicked(MouseEvent arg0) {
+	}
+
+	public void mouseEntered(MouseEvent arg0) {
+	}
+
+	public void mouseExited(MouseEvent arg0) {
+	}
+
+	public void mousePressed(MouseEvent arg0) {
+	}
+
+	public void mouseReleased(MouseEvent arg0) {
+	}
+
+}
