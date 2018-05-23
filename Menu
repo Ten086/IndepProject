@@ -1,0 +1,33 @@
+import java.awt.*;
+import javax.swing.*;
+
+public class Menu extends JPanel {
+	
+	public static void main(String[] args) {
+		Menu m = new Menu(500, 500);
+	}
+	
+	public Menu(int w, int h) {
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setMinimumSize(new Dimension(w, h));
+		frame.setLocation(300, 200);
+		frame.setVisible(true);
+		frame.add(this);
+		repaint();
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		int buttonWidth = 200;
+		int buttonHeight = 80;
+		g.setColor(Color.BLACK);
+		g.setFont(new Font("Dialog", Font.PLAIN, 30));
+		g.drawString("Tetris", 200, 100);
+		g.setColor(Color.BLUE);
+		g.fillRect(25, 150, buttonWidth, buttonHeight);
+		g.fillRect(250, 150, buttonWidth, buttonHeight);
+		g.fillRect(25, 250, buttonWidth, buttonHeight);
+		g.fillRect(250, 250, buttonWidth, buttonHeight);
+	}
+}
