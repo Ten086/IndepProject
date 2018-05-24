@@ -112,8 +112,8 @@ public class TetrisArray {
 		else {
 			filled = false;
 			for (int[] i : pos) {
-				System.out.println(Arrays.toString(i));
-				System.out.println(array[i[0] + 1][i[1]]);
+				//System.out.println(Arrays.toString(i));
+				//System.out.println(array[i[0] + 1][i[1]]);
 				if (array[i[0] + 1][i[1]] == Point.BOMB && i[0] + 1 == r) {
 					filled = true;
 				}
@@ -247,8 +247,13 @@ public class TetrisArray {
 			for (int j = 0; j < row.length; j++) {
 				row[j] = Point.TRASH;
 			}
-			int bombIndex = (int)(Math.random() * (Grid.COLS - 1));
-			row[bombIndex] = Point.BOMB;
+			int randIndex = (int)(Math.random() * (Grid.COLS - 1));
+			if (grid.getGameMode() == Menu.BOMBS) {
+				row[randIndex] = Point.BOMB;
+			}
+			else if (grid.getGameMode() == Menu.GAPS) {
+				row[randIndex] = Point.EMPTY;
+			}
 			newLines.add(row);
 		}
 
@@ -261,7 +266,7 @@ public class TetrisArray {
 		}
 
 		array = newArray;
-		print();
+		//print();
 	}
 
 	public void clearLines(int[][] pos) {
