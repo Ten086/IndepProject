@@ -87,10 +87,11 @@ public class ControlsMenu extends JPanel implements MouseListener, MouseMotionLi
 	}
 
 	public void mouseClicked(MouseEvent e) {
+		System.out.println(e.getX() + " " + e.getY());
 		boolean inBox = false;
 
 		int x = currentX;
-		int y = currentY;
+		int y = currentY + 25;
 		int w = width;
 		int h = height;
 		if (e.getX() >= x && e.getX() <= x + w 
@@ -117,7 +118,7 @@ public class ControlsMenu extends JPanel implements MouseListener, MouseMotionLi
 	public void mouseMoved(MouseEvent e) {
 		boolean inBox = false;
 		int x = currentX;
-		int y = currentY;
+		int y = currentY + 25;
 		int w = width;
 		int h = height;
 		if (e.getX() >= x && e.getX() <= x + w 
