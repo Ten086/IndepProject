@@ -9,12 +9,16 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 
 	public final static int buttonWidth = 200;
 	public final static int buttonHeight = 80;
+	public final static int SINGLE = 1;
+	public final static int RACE = 2;
+	public final static int BOMBS = 3;
+	public final static int GAPS = 4;
 	public JFrame frame;
 	public int selected = 0;
-	public int[] origXPos = {25, 25, 250, 250};
-	public int[] origYPos = {150, 250, 150, 250};
-	public int[] buttonXPos = {25, 25, 250, 250};
-	public int[] buttonYPos = {150, 250, 150, 250};
+	public int[] origXPos = {25, 25, 270, 270};
+	public int[] origYPos = {150, 270, 150, 270};
+	public int[] buttonXPos = {25, 25, 270, 270};
+	public int[] buttonYPos = {150, 270, 150, 270};
 	public int[] buttonWidths = {200, 200, 200, 200};
 	public int[] buttonHeights = {80, 80, 80, 80};
 	public int increase = 5;
@@ -41,11 +45,8 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, 500, 500);
-
 		g.setColor(Color.BLACK);
-		g.setFont(new Font("Dialog", Font.PLAIN, 30));
+		g.setFont(new Font("Dialog", Font.PLAIN, 40));
 		g.drawString("Tetris", 200, 100);
 
 		g.setColor(Grid.LIGHTBLUE);
@@ -60,9 +61,9 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 
 		g.setColor(Color.WHITE);
 		g.drawString("Single Player", 68, 195);
-		g.drawString("Two Player Race", 275, 195);
-		g.drawString("Two Player Bombs", 40, 295);
-		g.drawString("Two Player Gaps", 275, 295);
+		g.drawString("Two Player Race", 295, 195);
+		g.drawString("Two Player Bombs", 40, 315);
+		g.drawString("Two Player Gaps", 295, 315);
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -84,7 +85,7 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 		repaint();
 		if (selected > 0) {
 			frame.dispose();
-			HelpMenu h = new HelpMenu(500, 500, selected);
+			HelpMenu h = new HelpMenu(500, 530, selected);
 		}
 	}
 
@@ -104,8 +105,8 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 	}
 
 	public void resetButtons() {
-		buttonXPos = new int[] {25, 25, 250, 250};
-		buttonYPos = new int[] {150, 250, 150, 250};
+		buttonXPos = new int[] {25, 25, 270, 270};
+		buttonYPos = new int[] {150, 270, 150, 270};
 		for (int i = 0; i < buttonWidths.length; i++) {
 			buttonWidths[i] = buttonWidth;
 			buttonHeights[i] = buttonHeight;
@@ -116,7 +117,7 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 		buttonXPos[i] = origXPos[i] - shift;
 		buttonYPos[i] = origYPos[i] - shift;
 		buttonWidths[i] = buttonWidth + increase;
-		buttonHeights[i] = buttonHeight + 5;
+		buttonHeights[i] = buttonHeight + increase;
 	}
 	
 	public void mouseMoved(MouseEvent e) {
