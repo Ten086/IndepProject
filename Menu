@@ -85,7 +85,7 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 		repaint();
 		if (selected > 0) {
 			frame.dispose();
-			HelpMenu h = new HelpMenu(500, 530, selected);
+			ControlsMenu h = new ControlsMenu(500, 530, selected);
 		}
 	}
 
