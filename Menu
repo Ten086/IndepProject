@@ -10,8 +10,8 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 	public final static int buttonWidth = 200;
 	public final static int buttonHeight = 80;
 	public final static int SINGLE = 1;
-	public final static int RACE = 2;
-	public final static int BOMBS = 3;
+	public final static int BOMBS = 2;
+	public final static int RACE = 3;
 	public final static int GAPS = 4;
 	public JFrame frame;
 	public int selected = 0;
@@ -67,7 +67,7 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		System.out.println(e.getX() + " " + e.getY());
+		//System.out.println(e.getX() + " " + e.getY());
 		boolean inBox = false;
 		for (int i = 0; i < buttonWidths.length; i++) {
 			int x = buttonXPos[i];
