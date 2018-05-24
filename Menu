@@ -9,10 +9,10 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 
 	public final static int buttonWidth = 200;
 	public final static int buttonHeight = 80;
-	public final static int SINGLE = 1;
-	public final static int BOMBS = 2;
-	public final static int RACE = 3;
-	public final static int GAPS = 4;
+	public final static int MARATHON = 1;
+	public final static int SPRINT1P = 3;
+	public final static int SPRINT2P = 2;
+	public final static int BATTLE = 4;
 	public JFrame frame;
 	public int selected = 0;
 	public int[] origXPos = {25, 25, 270, 270};
@@ -21,6 +21,13 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 	public int[] buttonYPos = {150, 270, 150, 270};
 	public int[] buttonWidths = {200, 200, 200, 200};
 	public int[] buttonHeights = {80, 80, 80, 80};
+	public String description = "";
+	public String[] desc = {
+			"Try to beat 15 levels and score as many points as you can!",
+			"Clear 40 lines as fast as possible!",
+			"Clear 40 lines faster than your opponent does!",
+			"Clear lines to send garbage to your opponent and top them out!"
+			};
 	public int increase = 5;
 	public int shift = increase / 2;
 
@@ -60,10 +67,17 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 		g.setFont(new Font("Dialog", Font.PLAIN, 20));
 
 		g.setColor(Color.WHITE);
-		g.drawString("Single Player", 68, 195);
-		g.drawString("Two Player Race", 295, 195);
-		g.drawString("Two Player Bombs", 40, 315);
-		g.drawString("Two Player Gaps", 295, 315);
+		g.drawString("1 Player Marathon", 45, 195);
+		g.drawString("1 Player Sprint", 305, 195);
+		g.drawString("2 Player Sprint", 60, 315);
+		g.drawString("2 Player Battle", 305, 315);
+		
+		g.setFont(new Font("Dialog", Font.PLAIN, 16));
+		g.setColor(Color.BLACK);
+		g.drawString(description, 10, 400);
+		if (description.equals(desc[3])) {
+			g.drawString("Clear garbage lines by dropping a piece on the bomb.", 10, 420);
+		}
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -88,21 +102,6 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 			frame.dispose();
 			ControlsMenu h = new ControlsMenu(500, 530, selected);
 		}
-	}
-
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	public void mouseExited(MouseEvent arg0) {
-	}
-
-	public void mousePressed(MouseEvent arg0) {
-	}
-
-	public void mouseReleased(MouseEvent arg0) {
-	}
-
-	public void mouseDragged(MouseEvent arg0) {
 	}
 
 	public void resetButtons() {
@@ -132,6 +131,7 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 				&& e.getY() >= y && e.getY() <= y + h) {
 				inBox = true;
 				larg(i);
+				description = desc[i];
 			}
 			if (!inBox) {
 				resetButtons();
@@ -139,4 +139,20 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 		}
 		repaint();
 	}
+	
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent arg0) {
+	}
+
+	public void mousePressed(MouseEvent arg0) {
+	}
+
+	public void mouseReleased(MouseEvent arg0) {
+	}
+
+	public void mouseDragged(MouseEvent arg0) {
+	}
+
 }
