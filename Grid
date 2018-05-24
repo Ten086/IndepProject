@@ -49,6 +49,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public static final Color PURPLE = new Color(164, 4, 229);
 	public static final Color RED = new Color(234, 4, 4);
 	
+	private int gameMode = 0;
+	
 	private int numPlaced = 0;
 	private boolean win = false;
 	private boolean dead = false;
@@ -90,6 +92,21 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		keys = kesy;
 	}
 
+	public static void playTetris(int mode) {
+		if (mode == Menu.SINGLE) {
+			singlePlayerSetup(new Grid(thombusKeys));
+		}
+		else if (mode == Menu.RACE) {
+			twoPlayerSetup(new Grid(p1Keys), new Grid(p2Keys), Menu.RACE);
+		}
+		else if (mode == Menu.BOMBS) {
+			twoPlayerSetup(new Grid(p1Keys), new Grid(p2Keys), Menu.BOMBS);
+		}
+		else if (mode == Menu.GAPS) {
+			twoPlayerSetup(new Grid(p1Keys), new Grid(p2Keys), Menu.GAPS);
+		}
+	}
+	
 	public static void singlePlayerSetup(Grid player) {
 		JFrame f = new JFrame();
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -101,7 +118,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		f.setVisible(true);
 	}
 
-	public static void twoPlayerSetup(Grid p1, Grid p2) {
+	public static void twoPlayerSetup(Grid p1, Grid p2, int mode) {
 		JFrame f = new JFrame();
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setMinimumSize(new Dimension(2 * WIDTH, HEIGHT));
@@ -110,6 +127,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		f.add(p2);
 		p1.setOpponent(p2);
 		p2.setOpponent(p1);
+		p1.setGameMode(mode);
+		p2.setGameMode(mode);
 		f.setResizable(false);
 		f.pack();
 		f.addKeyListener(p1);
@@ -118,8 +137,8 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public static void main(String[] args) {
-		//singlePlayerSetup(new Grid());
-		twoPlayerSetup(new Grid(p1Keys), new Grid(p2Keys));
+		//singlePlayerSetup(new Grid(thombusKeys));
+		//twoPlayerSetup(new Grid(p1Keys), new Grid(p2Keys));
 	}
 
 	public void setUpTimer() {
@@ -132,6 +151,10 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		keys = keyList;
 	}
 
+	public void setGameMode(int mode) {
+		gameMode = mode;
+	}
+	
 	public void setOpponent(Grid opp) {
 		opponent = opp;
 	}
@@ -691,11 +714,11 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void hardDrop() {
+		getLines();
 		while (!currentMino.atBottom() && !array.checkCollision(currentMino, TetrisArray.BELOW)) {
 			currentMino.changePos(1, 0);
 			score += 2;
 		}
-		
 	}
 
 	public void setCurrentMinoPoints(Point p) {
