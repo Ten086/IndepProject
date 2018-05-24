@@ -302,7 +302,7 @@ public class TetrisArray {
 				grid.setLinesCleared(0);
 				grid.nextLevel();
 			}
-			if (grid.getLevel() == 20) {
+			if (grid.getLevel() == 15) {
 				grid.setWin(true);
 			}
 		}
