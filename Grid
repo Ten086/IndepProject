@@ -149,7 +149,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public void speedUpTimer() {
 		timer.stop();
-		timerDelay -= 50;
+		timerDelay -= 66;
 		timer = new Timer(timerDelay, this);
 		timer.start();
 	}
