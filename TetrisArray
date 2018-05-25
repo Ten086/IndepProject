@@ -9,6 +9,8 @@ public class TetrisArray {
 	private boolean lasttspin = false;
 	private boolean clearedLines;
 
+	private int prevLines = 0;
+
 	public static final int BELOW = 0;
 	public static final int LEFT = 1;
 	public static final int RIGHT = 2;
@@ -25,7 +27,7 @@ public class TetrisArray {
 	public Point[] getRow(int r) {
 		return array[r];
 	}
-	
+
 	public void setAllEmpty() {
 		for (int i = 0; i < Grid.ROWS; i++) {
 			for (int j = 0; j < Grid.COLS; j++) {
@@ -126,7 +128,7 @@ public class TetrisArray {
 		}
 		return empty;
 	}
-	
+
 	public boolean isEmptyRow(Point[] row) {
 		boolean empty = true;
 		for (Point p : row) {
@@ -136,7 +138,7 @@ public class TetrisArray {
 		}
 		return empty;
 	}
-	
+
 	public ArrayList<Point[]> getNotEmptyLines() {
 		ArrayList<Point[]> lines = new ArrayList<Point[]>();
 		for (int r = 0; r < Grid.ROWS; r++) {
@@ -146,7 +148,7 @@ public class TetrisArray {
 		}
 		return lines;
 	}
-	
+
 	public ArrayList<Point[]> getFilledLines(int[][] pos) {
 		ArrayList<Point[]> filledLines = new ArrayList<Point[]>();
 		int lines = 0;
@@ -154,14 +156,19 @@ public class TetrisArray {
 		for (int r = 0; r < Grid.ROWS; r++) {
 			if (lineFilled(r, pos)) {
 				filledLines.add(array[r]);
-				grid.incrementLinesCleared();
 				lines++;
 				clearedLines = true;
 			}
 		}
+		if (checkPerfClear()) {
+			prevLines = 20;
+			grid.incrementLinesCleared(10);
+		}
 		if (lasttetris && lines == 4) {
 			grid.addScore(5);
 			grid.setWrittenString("Back-to-Back \nTetris");
+			grid.incrementLinesCleared(4);
+			prevLines = 12;
 			if (grid.getGamePlayers() == 2) {
 				grid.doBarLines(6);
 			}
@@ -172,19 +179,25 @@ public class TetrisArray {
 				grid.addScore(lines + 8);
 				if (lines == 1) {
 					grid.setWrittenString("Back-to-Back \nT-Spin Single");
+					grid.incrementLinesCleared(1);
+					prevLines = 12;
 					if (grid.getGamePlayers() == 2) {
 						grid.doBarLines(3);
 					}
 				} else if (lines == 2) {
+					prevLines = 18;
 					grid.setWrittenString("Back-to-Back \nT-Spin Double");
 					if (grid.getGamePlayers() == 2) {
 						grid.doBarLines(6);
 					}
+					grid.incrementLinesCleared(2);
 				} else if (lines == 3) {
+					prevLines = 24;
 					grid.setWrittenString("Back-to-Back \nT-Spin Triple");
 					if (grid.getGamePlayers() == 2) {
 						grid.doBarLines(9);
 					}
+					grid.incrementLinesCleared(3);
 				}
 			} else {
 				if (lines == 1) {
@@ -192,16 +205,22 @@ public class TetrisArray {
 					if (grid.getGamePlayers() == 2) {
 						grid.doBarLines(2);
 					}
+					prevLines = 8;
+					grid.incrementLinesCleared(1);
 				} else if (lines == 2) {
 					grid.setWrittenString("T-Spin Double");
 					if (grid.getGamePlayers() == 2) {
 						grid.doBarLines(4);
 					}
+					prevLines = 12;
+					grid.incrementLinesCleared(2);
 				} else if (lines == 3) {
 					grid.setWrittenString("T-Spin Triple");
 					if (grid.getGamePlayers() == 2) {
 						grid.doBarLines(6);
 					}
+					prevLines = 16;
+					grid.incrementLinesCleared(3);
 				}
 				grid.addScore(lines + 5);
 			}
@@ -217,22 +236,32 @@ public class TetrisArray {
 		}
 		if (lines == 1) {
 			grid.setWrittenString("Single");
+			grid.incrementLinesCleared(1);
 			//doesn't send lines
+			prevLines = 1;
 		} else if (lines == 2) {
 			grid.setWrittenString("Double");
 			if (grid.getGamePlayers() == 2) {
 				grid.doBarLines(1);
 			}
+			prevLines = 3;
+			grid.incrementLinesCleared(2);
 		} else if (lines == 3) {
 			grid.setWrittenString("Triple");
 			if (grid.getGamePlayers() == 2) {
 				grid.doBarLines(2);
 			}
+			prevLines = 5;
+			grid.incrementLinesCleared(3);
 		} else if (lines == 4) {
 			grid.setWrittenString("Tetris");
 			if (grid.getGamePlayers() == 2) {
 				grid.doBarLines(4);
 			}
+			prevLines = 8;
+			grid.incrementLinesCleared(4);
+		} else if (lines == 0) {
+			prevLines = 0;
 		}
 		grid.addScore(lines);
 		return filledLines;
@@ -292,6 +321,7 @@ public class TetrisArray {
 		return index;
 	}
 
+
 	public void addLines(int lines) {
 		ArrayList<Point[]> newLines = new ArrayList<Point[]>();
 		Point[][] newArray = new Point[Grid.ROWS][Grid.COLS];
@@ -346,8 +376,8 @@ public class TetrisArray {
 		}
 
 		if (grid.getGameMode() == Menu.MARATHON) {
-			grid.setMGoal(grid.getMGoal() - filledLines.size());
-			if (grid.getLinesCleared() >= grid.getMGoal()) {
+			grid.setMGoal(grid.getMGoal() - prevLines);
+			if (grid.getLinesCleared() >= grid.getLevel() * 5) {
 				grid.setLinesCleared(0);
 				grid.nextLevel();
 			}
