@@ -2,14 +2,14 @@ import java.awt.Color;
 import java.util.Arrays;
 
 public class Tetromino {
-	
+
 	private TetrominoShape shape;
 	private int[][] position = new int[4][2];
 	private double[] COR = new double[2];
 	private Color color;
 	private TetrisArray array;
 	private int rotstate = 0;
-	
+
 	public Tetromino(TetrominoShape s, TetrisArray arrya) {
 		shape = s;
 		position = getInitialPosCopy();
@@ -18,7 +18,7 @@ public class Tetromino {
 		COR[1] = shape.getCOR()[1];
 		array = arrya;
 	}
-	
+
 	public Tetromino(TetrisArray arrya) {
 		TetrominoShape[] shapes = {TetrominoShape.I, TetrominoShape.J, TetrominoShape.L,
 				TetrominoShape.O, TetrominoShape.S, TetrominoShape.T, TetrominoShape.Z};
@@ -30,21 +30,21 @@ public class Tetromino {
 		COR[1] = shape.getCOR()[1];
 		array = arrya;
 	}
-	
+
 	public TetrominoShape getShape() {
 		return shape;
 	}
-	
+
 	public Color getColor() {
 		return color;
 	}
-	
+
 	public void printPos() {
 		for (int[] coords : position) {
 			System.out.print("row " + coords[0] + ", col " + coords[1] + " | ");
 		}
 	}
-	
+
 	public int[][] getInitialPosCopy() {
 		int[][] orig = shape.getCoords();
 		int[][] copy = new int[4][2];
@@ -55,15 +55,15 @@ public class Tetromino {
 		}
 		return copy;
 	}
-	
+
 	public int[][] getPos() {
 		return position;
 	}
-	
+
 	public double[] getCOR() {
 		return COR;
 	}
-	
+
 	public Point getSetMino() {
 		Point setMino = null;
 		for (Point p : Point.getSetMinoList()) {
@@ -73,7 +73,7 @@ public class Tetromino {
 		}
 		return setMino;
 	}
-	
+
 	public int[] getLowestCoord() {
 		int[] lowest = new int[2];
 		for (int[] coords : position) {
@@ -83,7 +83,7 @@ public class Tetromino {
 		}
 		return lowest;
 	}
-	
+
 	public void setInitialPos() {
 		position = getInitialPosCopy();
 		COR[0] = shape.getCOR()[0];
@@ -95,7 +95,7 @@ public class Tetromino {
 			changePos(0, 3);
 		}
 	}
-	
+
 	public void changePos(int rShift, int cShift) {
 		for (int[] coord : position) {
 			coord[0] += rShift;
@@ -104,7 +104,7 @@ public class Tetromino {
 		COR[0] += rShift;
 		COR[1] += cShift;
 	}
-	
+
 	public void rotateCW() {
 		double[] initCOR = new double[COR.length];
 		int[][] initPos = new int[position.length][position[0].length];
@@ -146,7 +146,7 @@ public class Tetromino {
 			rotstate = ((rotstate - 1) % 4 + 4) % 4;
 		}
 	}
-	
+
 	public void rotateCCW() {
 		int[][] initPos = new int[position.length][position[0].length];
 		for (int i = 0; i < position.length; i++) {
@@ -183,7 +183,7 @@ public class Tetromino {
 			rotstate = ((rotstate + 1) % 4 + 4) % 4;
 		}
 	}
-	
+
 	public boolean atBottom() {
 		boolean atBot = false;
 		for (int[] coord : position) {
@@ -193,7 +193,7 @@ public class Tetromino {
 		}
 		return atBot;
 	}
-	
+
 	public static boolean atBottom(int[][] coords) {
 		boolean atBot = false;
 		for (int[] coord : coords) {
@@ -203,7 +203,7 @@ public class Tetromino {
 		}
 		return atBot;
 	}
-	
+
 	public boolean collidesLeft(TetrisArray array) {
 		boolean collides = false;
 		for (int[] coord : position) {
@@ -217,7 +217,7 @@ public class Tetromino {
 		}
 		return collides;
 	}
-	
+
 	public boolean collidesRight(TetrisArray array) {
 		boolean collides = false;
 		for (int[] coord : position) {
@@ -231,7 +231,7 @@ public class Tetromino {
 		}
 		return collides;
 	}
-	
+
 	public boolean collidesBot(TetrisArray array) {
 		boolean collides = false;
 		for (int[] coord : position) {
@@ -245,7 +245,7 @@ public class Tetromino {
 		}
 		return collides;
 	}
-	
+
 	public boolean CWSRS(TetrisArray array) {
 		if (rotstate == 0) {
 			if (shape == TetrominoShape.I) {
@@ -456,10 +456,10 @@ public class Tetromino {
 				return false;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean CCWSRS(TetrisArray array) {
 		if (rotstate == 3) {
 			if (shape == TetrominoShape.I) {
@@ -670,10 +670,10 @@ public class Tetromino {
 				return false;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public void ceilKick(TetrisArray array) {
 		int max = 0;
 		for (int[] coord : position) {
@@ -683,7 +683,7 @@ public class Tetromino {
 		}
 		changePos(max, 0);
 	}
-	
+
 	public boolean collides(TetrisArray array) {
 		for (int[] coord : position) {
 			int row = coord[0];
@@ -700,7 +700,7 @@ public class Tetromino {
 		}
 		return false;
 	}
-	
+
 	public static void print(int[][] array) {
 		for (int[] i : array) {
 			System.out.println(Arrays.toString(i));
