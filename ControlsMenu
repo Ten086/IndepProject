@@ -11,6 +11,11 @@ import javax.swing.*;
 
 public class ControlsMenu extends JPanel implements MouseListener, MouseMotionListener {
 
+	public static final Color CONT1PGRAD1 = new Color (255, 78, 80);
+	public static final Color CONT1PGRAD2 = new Color (249, 212, 35);
+	public static final Color CONT2PGRAD1 = new Color (239, 50, 217);
+	public static final Color CONT2PGRAD2 = new Color (137, 255, 253);
+
 	public int mode = 0;
 	public JFrame frame;
 	public int origX = 195;
@@ -39,24 +44,23 @@ public class ControlsMenu extends JPanel implements MouseListener, MouseMotionLi
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
-		g.setColor(Color.WHITE);
-		g.drawRect(0, 0, 600, 600);
-		g.setColor(Color.BLACK);
-		g.setFont(new Font("Dialog", Font.PLAIN, 30));
-		g.drawString("Controls", 175, 50);
-
-		if (mode == Menu.SINGLE) {
+		if (mode == Menu.MARATHON || mode == Menu.SPRINT1P) {
 			drawSingleControls(g);
 		}
 		else {
 			drawDoubleControls(g);
 		}
-
 		drawButton(g);
 	}
 
 	public void drawSingleControls(Graphics g) {
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, 500, 500);
+		Graphics2D g2 = (Graphics2D) (g);
+		GradientPaint gradient = new GradientPaint(0, 0, CONT1PGRAD1, 0, 500, CONT1PGRAD2);
+		g2.setPaint(gradient);
+		g2.fillRect(0, 0, 500, 500);
+
 		JPanel panel = (JPanel) frame.getContentPane();
 		BufferedImage img;
 		try {
@@ -68,6 +72,13 @@ public class ControlsMenu extends JPanel implements MouseListener, MouseMotionLi
 	}
 
 	public void drawDoubleControls(Graphics g) {
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, 500, 500);
+		Graphics2D g2 = (Graphics2D) (g);
+		GradientPaint gradient = new GradientPaint(0, 0, CONT2PGRAD1, 0, 500, CONT2PGRAD2);
+		g2.setPaint(gradient);
+		g2.fillRect(0, 0, 500, 500);
+
 		JPanel panel = (JPanel) frame.getContentPane();
 		BufferedImage img;
 		try {
