@@ -5,7 +5,7 @@ public enum Point {
 	CURRMINO (null),
 	GHOST (null),
 	TRASH (null),
-	//BOMB (null),
+	BOMB (null),
 	SETMINOI (TetrominoShape.I),
 	SETMINOJ (TetrominoShape.J),
 	SETMINOL (TetrominoShape.L),
@@ -38,14 +38,14 @@ public enum Point {
 		else if (this == GHOST) {
 			s += "G";
 		}
+		else if (this.isSetPoint()) {
+			s += "S";
+		}
 		else if (this == TRASH) {
 			s += "T";
 		}
-		/*else if (this == BOMB) {
+		else if (this == BOMB) {
 			s += "B";
-		}*/
-		else if (this.isSetPoint()) {
-			s += "S";
 		}
 		else {
 			s += "error";
