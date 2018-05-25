@@ -13,6 +13,12 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 	public final static int SPRINT1P = 3;
 	public final static int SPRINT2P = 2;
 	public final static int BATTLE = 4;
+
+	public static final Color GRAD1 = new Color (7, 101, 133);
+	public static final Color GRAD2 = Color.WHITE;
+	public static final Color BUT1 = new Color (0, 80, 110);
+	public static final Color BUT2 = new Color (5, 44, 76);
+
 	public JFrame frame;
 	public int selected = 0;
 	public int[] origXPos = {25, 25, 270, 270};
@@ -24,10 +30,11 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 	public String description = "";
 	public String[] desc = {
 			"Try to beat 15 levels and score as many points as you can!",
-			"Clear 40 lines as fast as possible!",
 			"Clear 40 lines faster than your opponent does!",
-			"Clear lines to send garbage to your opponent and top them out!"
-			};
+			"Clear 40 lines as fast as possible!",
+			"Clear lines to send garbage to your opponent and top them out!",
+			""
+	};
 	public int increase = 5;
 	public int shift = increase / 2;
 
@@ -51,18 +58,24 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, 500, 500);
+		Graphics2D g2 = (Graphics2D) (g);
+		GradientPaint gradient = new GradientPaint(0, 0, GRAD1, 0, 500, GRAD2);
+		g2.setPaint(gradient);
+		g2.fillRect(0, 0, 500, 500);
 
-		g.setColor(Color.BLACK);
+		g.setColor(Color.WHITE);
 		g.setFont(new Font("Dialog", Font.PLAIN, 40));
 		g.drawString("Tetris", 200, 100);
 
-		g.setColor(Grid.LIGHTBLUE);
+		g.setColor(BUT1);
 		g.fillRect(buttonXPos[0], buttonYPos[0], buttonWidths[0], buttonHeights[0]);
-		g.setColor(Grid.GREEN);
+		g.setColor(BUT2);
 		g.fillRect(buttonXPos[1], buttonYPos[1], buttonWidths[1], buttonHeights[1]);
-		g.setColor(Grid.ORANGE);
+		g.setColor(BUT2);
 		g.fillRect(buttonXPos[2], buttonYPos[2], buttonWidths[2], buttonHeights[2]);
-		g.setColor(Grid.PURPLE);
+		g.setColor(BUT1);
 		g.fillRect(buttonXPos[3], buttonYPos[3], buttonWidths[3], buttonHeights[3]);
 		g.setFont(new Font("Dialog", Font.PLAIN, 20));
 
@@ -71,12 +84,12 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 		g.drawString("1 Player Sprint", 305, 195);
 		g.drawString("2 Player Sprint", 60, 315);
 		g.drawString("2 Player Battle", 305, 315);
-		
+
 		g.setFont(new Font("Dialog", Font.PLAIN, 16));
 		g.setColor(Color.BLACK);
-		g.drawString(description, 10, 400);
+		g.drawString(description, 30, 400);
 		if (description.equals(desc[3])) {
-			g.drawString("Clear garbage lines by dropping a piece on the bomb.", 10, 420);
+			g.drawString("Clear garbage lines by dropping a piece on the bomb.", 30, 420);
 		}
 	}
 
@@ -89,7 +102,7 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 			int w = buttonWidths[i];
 			int h = buttonHeights[i];
 			if (e.getX() >= x && e.getX() <= x + w 
-				&& e.getY() >= y && e.getY() <= y + h) {
+					&& e.getY() >= y && e.getY() <= y + h) {
 				selected = i + 1;
 				inBox = true;
 			}
@@ -112,14 +125,14 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 			buttonHeights[i] = buttonHeight;
 		}
 	}
-	
+
 	public void larg(int i) {
 		buttonXPos[i] = origXPos[i] - shift;
 		buttonYPos[i] = origYPos[i] - shift;
 		buttonWidths[i] = buttonWidth + increase;
 		buttonHeights[i] = buttonHeight + increase;
 	}
-	
+
 	public void mouseMoved(MouseEvent e) {
 		boolean inBox = false;
 		for (int i = 0; i < buttonWidths.length; i++) {
@@ -128,18 +141,19 @@ public class Menu extends JPanel implements MouseMotionListener, MouseListener {
 			int w = buttonWidths[i];
 			int h = buttonHeights[i];
 			if (e.getX() >= x && e.getX() <= x + w 
-				&& e.getY() >= y && e.getY() <= y + h) {
+					&& e.getY() >= y && e.getY() <= y + h) {
 				inBox = true;
 				larg(i);
 				description = desc[i];
 			}
 			if (!inBox) {
+				description = desc[4];
 				resetButtons();
 			}
 		}
 		repaint();
 	}
-	
+
 	public void mouseEntered(MouseEvent e) {
 	}
 
