@@ -71,7 +71,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	boolean waitTick;
 	private int timerDelay = 1000;
 	private int time = 0;
-	
+
 	private int marathonLevel = 1;
 	private int marathonGoal = 5;
 	private int sprintGoal = 40;
@@ -169,15 +169,15 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void setGamePlayers(int p) {
 		gamePlayers = p;
 	}
-	
+
 	public int getGamePlayers() {
 		return gamePlayers;
 	}
-	
+
 	public int getLevel() {
 		return marathonLevel;
 	}
-	
+
 	public void nextLevel() {
 		marathonLevel++;
 		marathonGoal = 5 * marathonLevel;
@@ -187,7 +187,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public void setMGoal(int goal) {
 		marathonGoal = goal;
 	}
-	
+
 	public void setSGoal(int goal) {
 		sprintGoal = goal;
 	}
@@ -195,7 +195,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	public int getMGoal() {
 		return marathonGoal;
 	}
-	
+
 	public int getSGoal() {
 		return sprintGoal;
 	}
@@ -258,7 +258,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		if (gamePlayers == 2) {
 			drawBar(g);
 			drawBarLines(g);
-			}
+		}
 		drawNextGrid(g);
 		drawNextMinos(g);
 		drawHoldGrid(g);
@@ -305,26 +305,27 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				if (!alreadyAddedLines) {
 					if (combo == 1 || combo == 2) {
 						if (getGamePlayers() == 2) {
-							opponent.addBarLines(1);
+							doBarLines(1);
 						}
 					}
-				}
-				else if (combo == 3 || combo == 4) {
-					if (getGamePlayers() == 2) {
-						opponent.addBarLines(2);
+
+					else if (combo == 3 || combo == 4) {
+						if (getGamePlayers() == 2) {
+							doBarLines(2);
+						}
 					}
-				}
-				else if (combo == 5 || combo == 6) {
-					if (getGamePlayers() == 2) {
-						opponent.addBarLines(3);
+					else if (combo == 5 || combo == 6) {
+						if (getGamePlayers() == 2) {
+							doBarLines(3);
+						}
 					}
-				}
-				else {
-					if (getGamePlayers() == 2) {
-						opponent.addBarLines(4);
+					else {
+						if (getGamePlayers() == 2) {
+							doBarLines(4);
+						}
 					}
+					alreadyAddedLines = true;
 				}
-				alreadyAddedLines = true;
 			}
 			else {
 				s = "";
@@ -366,7 +367,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			g.setFont(new Font("Dialog", Font.PLAIN, 30));
 			g.drawString("Your time:", WIDTH / 3 + 35, HEIGHT / 3 + 100);
 			g.drawString(new Integer(time).toString() + " sec", WIDTH / 3 + 65, HEIGHT / 3 + 150);
-			
+
 		}
 	}
 
@@ -380,6 +381,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 
 	public void drawStrings(Graphics g) {
 		g.setFont(new Font("Dialog", Font.BOLD, 40));
+		g.drawString(new Integer(barLines).toString(), (WIDTH / 5) + 50, YMARGIN - 10);
 		g.drawString("Tetris", (WIDTH / 3) + 50, YMARGIN - 10);
 
 		g.setFont(new Font("Dialog", Font.BOLD, 20));
@@ -394,6 +396,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 			g.drawString("GOAL", HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric.stringWidth("GOAL") / 2, HEIGHT / 2 + 150);
 		}
 
+
 		g.setFont(new Font("Dialog", Font.BOLD, 16));
 		FontMetrics metric2 = g.getFontMetrics();
 		g.drawString(new Integer(score).toString(), HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric2.stringWidth(new Integer(score).toString()) / 2, HEIGHT / 2 + 60);
@@ -404,7 +407,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		else if (gameMode == Menu.SPRINT1P || gameMode == Menu.SPRINT2P) {
 			g.drawString(new Integer(sprintGoal).toString(), HOLDGRIDXMARGIN + BIGBOXSIZE / 2 - metric2.stringWidth(new Integer(sprintGoal).toString()) / 2, HEIGHT / 2 + 180);
 		}
-		
+
 	}
 
 	public void drawGrid(Graphics g) {	
@@ -639,7 +642,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		currentMino = nextMinos.remove(0);
 		addNextMino(new Tetromino(array));
 		currentMino.setInitialPos();
-		repaint();
+
 		for (int[] coord : currentMino.getPos()) {
 			if (array.getPoint(coord[0], coord[1]) != Point.EMPTY && array.getPoint(coord[0], coord[1]) != Point.CURRMINO) {
 				dead = true;
@@ -655,27 +658,47 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 		if (array.getCleared()) {
 			combo++;
 			alreadyAddedLines = false;
-		} else {
+		}
+		else {
 			combo = 0;
 			alreadyAddedLines = false;
 		}
 		setCurrentMinoPoints(Point.CURRMINO);
+		repaint();
 	}
 
-	/*public void sendLines(int lines) {
-		opponent.array.addLines(lines);
-	}*/
+	public void doBarLines(int lines) {
+		int linesCopy = lines;
+		while (barLines > 0 && linesCopy > 0) {
+			barLines--;
+			linesCopy--;
+		}
+		if (linesCopy > 0) {
+			opponent.addBarLines(linesCopy);
+		}
 
+	}
 	public void getLines() {
 		if (gameMode == Menu.BATTLE) {
-			array.addLines(barLines);
-			barLines = 0;
+			if (barLines > 0) {
+				array.addLines(barLines);
+				barLines = 0;
+			}
 		}
 	}
 
 	public void addBarLines(int lines) {
 		if (gameMode == Menu.BATTLE) {
 			barLines += lines;
+		}
+	}
+
+	public void decreaseBarLines(int lines) {
+		if (gameMode == Menu.BATTLE) {
+			while (lines > 0 && barLines > 0) {
+				barLines -= 1;
+				lines--;
+			}
 		}
 	}
 
@@ -744,6 +767,7 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 				putDownCurrentMino();
 				gotHeld = false;
 				array.clearLines(pos);
+				getLines();
 				tspin = false;
 				newMino();
 				numPlaced++;
@@ -797,7 +821,6 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void hardDrop() {
-		getLines();
 		while (!currentMino.atBottom() && !array.checkCollision(currentMino, TetrisArray.BELOW)) {
 			currentMino.changePos(1, 0);
 			score += 2;
@@ -811,8 +834,11 @@ public class Grid extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
+		//System.out.println(write);
 		time += 1;
-		
+		//array.print();
+		//System.out.println();
+
 		if (needWrite2) {
 			needWrite2 = false;
 		}
